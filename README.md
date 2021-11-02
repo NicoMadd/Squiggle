@@ -15,5 +15,14 @@ It's purpose actually was just to make SELECT queries, you can also make JOINs w
 ## Looking Forward
 In the future, I hope it can be used to make INSERTs, UPDATEs, DELETEs and also be "intelligent" enough to optimize the query made.
 
-## Implementations
+## TODOs
 1. SELECT
+2. INSERT
+3. UPDATE
+4. DELETE
+5. GROUP BY
+6. CREATE TABLE
+7. CREATE VIEW
+8. CREATE COMMIT
+9. CREATE TRANSACTION
+10. TRIGGERS
