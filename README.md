@@ -11,6 +11,7 @@ Im planning on giving maintenance to it, and developing it even further since I 
 
 ## What we have
 It's purpose actually was just to make SELECT queries, you can also make JOINs with other tables, condition columns with WHEREs and order them with GROUP BYs. 
+The version I took is the 1.4.0. So... next release will be 1.5.0 to make differences with the original repo.
 
 ## Looking Forward
 In the future, I hope it can be used to make INSERTs, UPDATEs, DELETEs and also be "intelligent" enough to optimize the query made.
