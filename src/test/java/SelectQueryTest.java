@@ -30,7 +30,7 @@ public class SelectQueryTest {
     }
 
     @Test
-    public void correctSelectFromQuery() {
+    public void happyCaseSimple() {
         SelectQuery select = Squiggle.Select().from("table").select("column");
         assertEquals(select.toString(true), "SELECT table.column FROM table");
     }
