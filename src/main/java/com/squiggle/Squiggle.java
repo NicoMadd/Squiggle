@@ -1,8 +1,12 @@
 package com.squiggle;
 
+import com.squiggle.parsers.Parser;
+import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.*;
 
 public class Squiggle {
+
+    static Parser parser = new SqlServerParser();
 
     public static SelectQuery Select() {
         return new SelectQuery();
@@ -18,5 +22,13 @@ public class Squiggle {
 
     public static InsertQuery Insert() {
         return new InsertQuery();
+    }
+
+    public static void setParser(Parser parser) {
+        Squiggle.parser = parser;
+    }
+
+    public static Parser getParser() {
+        return Squiggle.parser;
     }
 }

@@ -262,4 +262,10 @@ public class UpdateQuery extends Query {
         return allTables;
     }
 
+    @Override
+    public List<Table> getUsedTables() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

@@ -13,11 +13,11 @@ import com.squiggle.output.*;
 public class SelectQuery extends Query {
 
     protected boolean isDistinct = false;
-    protected List order;
+    protected Set<Order> order;
 
     public SelectQuery() {
         super();
-        this.order = new ArrayList();
+        this.order = new HashSet<>();
 
     }
 
@@ -68,10 +68,6 @@ public class SelectQuery extends Query {
         return this;
     }
 
-    public List listColumns() {
-        return Collections.unmodifiableList(columns);
-    }
-
     public boolean isDistinct() {
         return isDistinct;
     }
@@ -95,10 +91,6 @@ public class SelectQuery extends Query {
     public SelectQuery removeCriteria(Criteria criteria) {
         this.criteria.remove(criteria);
         return this;
-    }
-
-    public List listCriteria() {
-        return Collections.unmodifiableList(criteria);
     }
 
     /**
@@ -149,65 +141,13 @@ public class SelectQuery extends Query {
         return this;
     }
 
-    public List listOrder() {
-        return Collections.unmodifiableList(order);
+    public Set<Order> listOrder() {
+        return order;
     }
 
     public void write(Output out) {
 
-        out.println("SELECT");
-        if (isDistinct) {
-            out.println(" DISTINCT");
-        }
-
-        // Add columns to select
-        out.indent();
-        appendList(out, columns, ",");
-        out.unindent();
-
-        // Add tables to select from
-        out.println("FROM");
-
-        // Determine all tables used in query
-        out.indent();
-        appendList(out, findAllUsedTables(), ",");
-        out.unindent();
-
-        // Add criteria
-        if (criteria.size() > 0) {
-            out.println("WHERE");
-            out.indent();
-            appendList(out, criteria, "AND");
-            out.unindent();
-        }
-
-        // Add order
-        if (order.size() > 0) {
-            out.println("ORDER BY");
-            out.indent();
-            appendList(out, order, ",");
-            out.unindent();
-        }
-    }
-
-    /**
-     * Iterate through a Collection and append all entries (using .toString()) to a
-     * StringBuffer.
-     */
-    private void appendList(Output out, Collection collection, String seperator) {
-        Iterator i = collection.iterator();
-        boolean hasNext = i.hasNext();
-
-        while (hasNext) {
-            Outputable curr = (Outputable) i.next();
-            hasNext = i.hasNext();
-            curr.write(out);
-            out.print(' ');
-            if (hasNext) {
-                out.print(seperator);
-            }
-            out.println();
-        }
+        this.parser.selectQuery(this, out);
     }
 
     /**
@@ -215,49 +155,35 @@ public class SelectQuery extends Query {
      *
      * @return List of {@link com.squiggle.base.systech.Squiggle.Table}s
      */
-    private List findAllUsedTables() {
+    @Override
+    public List<Table> getUsedTables() {
 
-        List allTables = new ArrayList();
-        allTables.add(baseTable);
+        LinkedHashSet<Table> allTables = new LinkedHashSet<>();
+        allTables.add(this.getBaseTable());
 
-        { // Get all tables used by columns
-            Iterator i = columns.iterator();
-            while (i.hasNext()) {
-                Table curr = ((Column) i.next()).getTable();
-                if (!allTables.contains(curr)) {
-                    allTables.add(curr);
-                }
+        for (Column column : this.listColumns()) {
+            allTables.add(column.getTable());
+        }
+
+        // Get all tables used by criteria TODO capaz convendria separar los criteria.
+        // una collection para Joins y una para Matchs. Esto es bueno? si hay mas tipos
+        // que onda?
+        // cambio a comprobar la clase. :( no se si es mejor hacer un metodo por cada
+        // tipo
+
+        for (Criteria criteria : this.listCriteria()) {
+            if (criteria instanceof JoinCriteria) {
+                JoinCriteria joinCriteria = (JoinCriteria) criteria;
+                allTables.add(joinCriteria.getSource().getTable());
+                allTables.add(joinCriteria.getDest().getTable());
             }
         }
 
-        { // Get all tables used by criteria
-            Iterator i = criteria.iterator();
-            while (i.hasNext()) {
-                try {
-                    JoinCriteria curr = (JoinCriteria) i.next();
-                    if (!allTables.contains(curr.getSource().getTable())) {
-                        allTables.add(curr.getSource().getTable());
-                    }
-                    if (!allTables.contains(curr.getDest().getTable())) {
-                        allTables.add(curr.getDest().getTable());
-                    }
-                } catch (ClassCastException e) {
-                } // not a JoinCriteria
-            }
+        for (Order order : this.listOrder()) {
+            allTables.add(order.getColumn().getTable());
         }
 
-        { // Get all tables used by columns
-            Iterator i = order.iterator();
-            while (i.hasNext()) {
-                Order curr = (Order) i.next();
-                Table c = curr.getColumn().getTable();
-                if (!allTables.contains(c)) {
-                    allTables.add(c);
-                }
-            }
-        }
-
-        return allTables;
+        return new LinkedList<>(allTables);
     }
 
 }

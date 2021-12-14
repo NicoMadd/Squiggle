@@ -11,10 +11,16 @@ public class Column implements Outputable {
 
     private String name;
     private Table table;
+    private Boolean writeWithTable;
 
     public Column(Table table, String name) {
         this.table = table;
         this.name = name;
+        this.writeWithTable = true;
+    }
+
+    public void writeWithTable(Boolean writeWithTable) {
+        this.writeWithTable = writeWithTable;
     }
 
     public Table getTable() {
@@ -30,7 +36,9 @@ public class Column implements Outputable {
     }
 
     public void write(Output out) {
-        out.print(getTable().getAlias()).print('.').print(getName());
+        if (writeWithTable)
+            out.print(getTable().getAlias()).print('.');
+        out.print(getName());
     }
 
 }

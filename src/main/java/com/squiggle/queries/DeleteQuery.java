@@ -104,4 +104,10 @@ public class DeleteQuery extends Query {
         }
     }
 
+    @Override
+    public List<Table> getUsedTables() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

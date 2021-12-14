@@ -14,6 +14,7 @@ public class Table implements Outputable {
 
     public Table(String name) {
         this.name = name;
+        this.alias = null;
     }
 
     public Table(String name, String alias) {
