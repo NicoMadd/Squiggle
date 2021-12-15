@@ -1,7 +1,5 @@
 package com.squiggle.base;
 
-import com.squiggle.base.Column;
-import com.squiggle.base.Criteria;
 import com.squiggle.output.Output;
 
 /**

@@ -8,8 +8,11 @@ import com.squiggle.base.Column;
 import com.squiggle.base.Row;
 import com.squiggle.output.Output;
 import com.squiggle.output.Outputable;
+import com.squiggle.queries.DeleteQuery;
 import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
+import com.squiggle.queries.UpdateQuery;
+import com.squiggle.types.Type;
 
 public class SqlServerParser extends Parser {
 
@@ -20,57 +23,55 @@ public class SqlServerParser extends Parser {
      * Iterate through a Collection and append all entries (using .toString()) to a
      * StringBuffer.
      */
-    private void appendList(Output out, Collection collection, String seperator) {
-        Iterator i = collection.iterator();
-        boolean hasNext = i.hasNext();
-
-        while (hasNext) {
+    private void appendList(Output out, Collection<? extends Outputable> outputables, String seperator) {
+        for (Iterator<? extends Outputable> i = outputables.iterator(); i.hasNext();) {
             Outputable curr = (Outputable) i.next();
-            hasNext = i.hasNext();
             curr.write(out);
-            out.print(' ');
-            if (hasNext) {
+            if (i.hasNext()) {
                 out.print(seperator);
+                out.space();
+
             }
-            // out.println();
         }
+
     }
 
     @Override
     public void selectQuery(SelectQuery selectQuery, Output out) {
 
-        out.println("SELECT");
+        out.print("SELECT");
         if (selectQuery.isDistinct()) {
-            out.println(" DISTINCT");
+            out.print(" DISTINCT");
         }
 
         // Add columns to select
-        out.indent();
+        out.space();
         appendList(out, selectQuery.listColumns(), ",");
-        out.unindent();
 
         // Add tables to select from
-        out.println("FROM");
+        out.space();
+        out.print("FROM");
 
         // Determine all tables used in query
-        out.indent();
+        out.space();
         appendList(out, selectQuery.getUsedTables(), ",");
-        out.unindent();
 
         // Add criteria
         if (selectQuery.listCriteria().size() > 0) {
-            out.println("WHERE");
-            out.indent();
+            out.space();
+            out.print("WHERE");
+            out.space();
+
             appendList(out, selectQuery.listCriteria(), "AND");
-            out.unindent();
+
         }
 
         // Add order
         if (selectQuery.listOrder().size() > 0) {
-            out.println("ORDER BY");
-            out.indent();
+            out.print(" ORDER BY");
+
             appendList(out, selectQuery.listOrder(), ",");
-            out.unindent();
+
         }
 
     }
@@ -79,17 +80,14 @@ public class SqlServerParser extends Parser {
      * Iterate through a Collection and append all entries (using .toString()) to a
      * StringBuffer.
      */
-    private void appendObjectList(Output out, Collection<Object> collection, String separator) {
-        Iterator<Object> i = collection.iterator();
-        boolean hasNext = i.hasNext();
+    private void appendObjectList(Output out, List<Type> typeList, String separator) {
 
-        while (hasNext) {
-            Object curr = i.next();
-            hasNext = i.hasNext();
-            out.print(curr);
-            out.print(' ');
-            if (hasNext) {
+        Integer length = typeList.size();
+        for (int i = 0; i < length; i++) {
+            typeList.get(i).write(out);
+            if (i < length - 1) {
                 out.print(separator);
+                out.print(' ');
             }
         }
     }
@@ -97,43 +95,55 @@ public class SqlServerParser extends Parser {
     @Override
     public void insertQuery(InsertQuery insertQuery, Output out) {
 
-        if (insertQuery.getLastRow().getValuesCount() > 0)
-            insertQuery.endRow();
-
-        out.println("INSERT INTO");
+        out.print("INSERT INTO");
 
         // Add into table
+        out.space();
         out.print(insertQuery.getBaseTable());
 
         // add column names
-        out.indent();
-        out.print(" (");
+        out.space();
+        out.print("(");
         List<Column> insertColumns = insertQuery.listColumns();
         insertColumns.forEach(col -> col.writeWithTable(false));
         appendList(out, insertColumns, ",");
-        out.println(")");
-        out.unindent();
+        out.print(")");
+        out.space();
 
         // add values
-        out.indent();
         out.print("VALUES ");
-        System.out.println("rows.size() = " + insertQuery.getRows().size());
-        System.out.println(insertQuery.getLastRow().toString());
-        for (Row row : insertQuery.getRows()) {
+        System.out.print("rows.size() = " + insertQuery.getRows().size());
+        System.out.print(insertQuery.getLastRow().toString());
+        List<Row> rows = insertQuery.getRows();
+        Integer length = rows.size();
+        Integer i = 0;
+        for (Row row : rows) {
             out.print("(");
             appendObjectList(out, row.getValues(), ",");
-            out.println(")");
+            out.print(")");
+            if (length != ++i)
+                out.print(", ");
         }
-
-        out.unindent();
 
         // Add criteria
         if (insertQuery.listCriteria().size() > 0) {
-            out.println("WHERE");
-            out.indent();
+            out.print("WHERE");
+
             appendList(out, insertQuery.listCriteria(), "AND");
-            out.unindent();
+
         }
+
+    }
+
+    @Override
+    public void updateQuery(UpdateQuery updateQuery, Output out) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void deleteQuery(Output out, DeleteQuery deleteQuery) {
+        // TODO Auto-generated method stub
 
     }
 

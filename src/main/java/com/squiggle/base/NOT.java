@@ -1,8 +1,5 @@
 package com.squiggle.base;
 
-import com.squiggle.base.BaseLogicGroup;
-import com.squiggle.base.Criteria;
-
 /**
  * Class NOT is a {@link BaseLogicGroup} extension that generates the SQL syntax
  * for the negation operator in a condition in an SQL Where clause.

@@ -48,6 +48,10 @@ public class Output {
         return this;
     }
 
+    public void space() {
+        result.append(' ');
+    }
+
     public void indent() {
         currentIndent.append(indent);
     }

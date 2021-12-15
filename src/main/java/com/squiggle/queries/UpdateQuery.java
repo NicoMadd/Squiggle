@@ -107,18 +107,21 @@ public class UpdateQuery extends Query {
      * Syntax sugar for addCriteria(JoinCriteria)
      */
     public UpdateQuery join(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
-        return addCriteria(new JoinCriteria(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)));
+        return addCriteria(new JoinCriteria(srcTable.getColumn(srcColumnname),
+                destTable.getColumn(destColumnname)));
     }
 
     public UpdateQuery join(String srcColumnname, String destTable, String destColumnname) {
         Table dstTable = new Table(destTable);
-        addCriteria(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)));
+        addCriteria(new JoinCriteria(this.baseTable.getColumn(srcColumnname),
+                dstTable.getColumn(destColumnname)));
         return this.from(dstTable);
     }
 
     public UpdateQuery join(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
         Table dstTable = new Table(destTable, tableAlias);
-        addCriteria(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)));
+        addCriteria(new JoinCriteria(this.baseTable.getColumn(srcColumnname),
+                dstTable.getColumn(destColumnname)));
         return this.from(dstTable);
     }
 
@@ -128,13 +131,15 @@ public class UpdateQuery extends Query {
     }
 
     public UpdateQuery order(String columnName, Boolean orderDirection) {
-        Order order = new Order(new Column(this.baseTable, columnName), orderDirection);
+        Order order = new Order(new Column(this.baseTable, columnName),
+                orderDirection);
         this.order.add(order);
         return this;
     }
 
     public UpdateQuery order(String columnName, String tableName, Boolean orderDirection) {
-        Order order = new Order(new Column(new Table(tableName), columnName), orderDirection);
+        Order order = new Order(new Column(new Table(tableName), columnName),
+                orderDirection);
         this.order.add(order);
         return this;
     }
@@ -143,7 +148,8 @@ public class UpdateQuery extends Query {
      * Syntax sugar for order(Order).
      */
     public UpdateQuery order(Table table, String columnname, boolean ascending) {
-        return UpdateQuery.this.order(new Order(table.getColumn(columnname), ascending));
+        return UpdateQuery.this.order(new Order(table.getColumn(columnname),
+                ascending));
     }
 
     public UpdateQuery removeOrder(Order order) {
@@ -156,44 +162,12 @@ public class UpdateQuery extends Query {
     }
 
     public void write(Output out) {
-
-        out.println("SELECT");
-        if (isDistinct) {
-            out.println(" DISTINCT");
-        }
-
-        // Add columns to select
-        out.indent();
-        appendList(out, columns, ",");
-        out.unindent();
-
-        // Add tables to select from
-        out.println("FROM");
-
-        // Determine all tables used in query
-        out.indent();
-        appendList(out, findAllUsedTables(), ",");
-        out.unindent();
-
-        // Add criteria
-        if (criteria.size() > 0) {
-            out.println("WHERE");
-            out.indent();
-            appendList(out, criteria, "AND");
-            out.unindent();
-        }
-
-        // Add order
-        if (order.size() > 0) {
-            out.println("ORDER BY");
-            out.indent();
-            appendList(out, order, ",");
-            out.unindent();
-        }
+        this.parser.updateQuery(this, out);
     }
 
     /**
-     * Iterate through a Collection and append all entries (using .toString()) to a
+     * Iterate through a Collection and append all entries (using .toString()) to
+     * a
      * StringBuffer.
      */
     private void appendList(Output out, Collection collection, String seperator) {

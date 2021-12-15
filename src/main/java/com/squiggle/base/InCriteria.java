@@ -109,13 +109,11 @@ public class InCriteria extends Criteria {
         out.print(column);
         out.println(" IN (");
 
-        out.indent();
         if (subSelect != null) {
             subSelect.write(out);
         } else {
             out.print(value);
         }
-        out.unindent();
 
         out.println();
         out.print(")");

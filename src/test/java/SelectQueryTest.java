@@ -30,9 +30,31 @@ public class SelectQueryTest {
     }
 
     @Test
-    public void happyCaseSimple() {
+    public void oneTableOneColumnSelect() {
         SelectQuery select = Squiggle.Select().from("table").select("column");
-        assertEquals(select.toString(true), "SELECT table.column FROM table");
+        assertEquals("SELECT table.column FROM table", select.toString());
+    }
+
+    @Test
+    public void oneTableTwoColumnsSelect() {
+        SelectQuery select = Squiggle.Select().from("table").select("column1").select("column2");
+        assertEquals("SELECT table.column1, table.column2 FROM table", select.toString());
+    }
+
+    @Test
+    public void twoTablesOneColumnSelect() {
+        SelectQuery select = Squiggle.Select().from("table1").select("column1").from("table2").select("column2");
+        assertEquals("SELECT table1.column1, table2.column2 FROM table1, table2", select.toString());
+    }
+
+    // TODO agregar que el join se haga como un join normal y no el producto
+    // cartesiano
+    @Test
+    public void twoJoinedTablesOneColumnSelect() {
+        SelectQuery select = Squiggle.Select().from("table1").select("column1").join("table1", "table2", "column1")
+                .select("column2");
+        assertEquals("SELECT table1.column1, table2.column2 FROM table1, table2 WHERE table1.table1 = table2.column1",
+                select.toString());
     }
 
 }

@@ -7,8 +7,6 @@ package com.squiggle.base;
 
 import java.util.Date;
 
-import com.squiggle.base.AND;
-
 /**
  *
  * @author nmadeo

@@ -2,9 +2,6 @@ package com.squiggle.base;
 
 import java.util.List;
 
-import com.squiggle.base.AND;
-import com.squiggle.base.Criteria;
-import com.squiggle.base.OR;
 import com.squiggle.output.Output;
 
 /**
@@ -100,7 +97,7 @@ public class CriteriaExpression extends Criteria {
    *                 {@link Operator#OR OR} that joins each criteria term with the
    *                 next in the list.
    */
-  public CriteriaExpression(final List terms, int operator) {
+  public CriteriaExpression(final List<Criteria> terms, int operator) {
     this.operator = operator;
     if (terms.size() == 0)
       ;

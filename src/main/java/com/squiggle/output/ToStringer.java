@@ -9,7 +9,7 @@ package com.squiggle.output;
 public class ToStringer {
 
     public static String toString(Outputable outputable) {
-        Output out = new Output("    ");
+        Output out = new Output(" ");
         outputable.write(out);
         return out.toString().trim();
     }

@@ -146,7 +146,6 @@ public class SelectQuery extends Query {
     }
 
     public void write(Output out) {
-
         this.parser.selectQuery(this, out);
     }
 
@@ -182,8 +181,9 @@ public class SelectQuery extends Query {
         for (Order order : this.listOrder()) {
             allTables.add(order.getColumn().getTable());
         }
-
-        return new LinkedList<>(allTables);
+        LinkedList<Table> linkedList = new LinkedList<>(allTables);
+        Collections.reverse(linkedList);
+        return linkedList;
     }
 
 }

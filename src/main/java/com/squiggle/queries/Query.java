@@ -8,8 +8,6 @@ import com.squiggle.base.*;
 import com.squiggle.output.*;
 import com.squiggle.parsers.Parser;
 
-import javafx.scene.control.Tab;
-
 public abstract class Query implements Outputable {
 
     public static final int indentSize = 4;
@@ -38,12 +36,11 @@ public abstract class Query implements Outputable {
         return ToStringer.toString(this);
     }
 
-    public String toString(Boolean indent) {
-        validate();
-        String query = ToStringer.toString(this);
-        return indent ? query.replaceAll("\\s+", " ") : query;
+    // public String toString(Boolean indent) {
+    // validate();
+    // return ToStringer.toString(this);
 
-    }
+    // }
 
     protected void validate() {
         if (this.baseTable == null) {
