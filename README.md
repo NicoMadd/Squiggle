@@ -20,7 +20,7 @@ In the future, I hope it can be used to make INSERTs, UPDATEs, DELETEs and also 
 ## TODOs
 
 1. SELECT - [X]
-2. INSERT - [ ]
+2. INSERT - [X]
 3. UPDATE - [ ]
 4. DELETE - [ ]
 5. GROUP BY - [ ]
