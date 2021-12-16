@@ -23,7 +23,9 @@ public class JoinCriteria extends Criteria {
     }
 
     public void write(Output out) {
-        out.print(source).print(" = ").print(dest);
+
+        out.print(source.getTable()).space().print("JOIN").space().print(dest.getTable()).space().print("ON").space()
+                .print(source).space().print("=").space().print(dest);
     }
 
 }

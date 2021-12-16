@@ -47,13 +47,24 @@ public class SelectQueryTest {
         assertEquals("SELECT table1.column1, table2.column2 FROM table1, table2", select.toString());
     }
 
+    @Test
+    public void twoJoinedTablesOneColumnWithWhereSelect() {
+        SelectQuery select = Squiggle.Select().from("table1").select("column1").from("table2")
+                .where("column1", c -> c.link("table1", "table2", "column2"))
+                .select("column2");
+        assertEquals("SELECT table1.column1, table2.column2 FROM table1, table2 WHERE table1.column1 = table2.column2",
+                select.toString());
+    }
+
     // TODO agregar que el join se haga como un join normal y no el producto
     // cartesiano
     @Test
     public void twoJoinedTablesOneColumnSelect() {
-        SelectQuery select = Squiggle.Select().from("table1").select("column1").join("table1", "table2", "column1")
+        // .join("table1", "table2", "column1").select("column2");
+        SelectQuery select = Squiggle.Select().from("table1").select("column1").join("column1", "table2", "column2")
                 .select("column2");
-        assertEquals("SELECT table1.column1, table2.column2 FROM table1, table2 WHERE table1.table1 = table2.column1",
+        assertEquals(
+                "SELECT table1.column1, table2.column2 FROM table1 JOIN table2 ON table1.column1 = table2.column2",
                 select.toString());
     }
 
