@@ -69,6 +69,12 @@ public class MatchCriteria extends Criteria {
     this.matchType = matchType;
   }
 
+  public MatchCriteria(Column column, String matchType, String value, Boolean quote) {
+    this.column = column;
+    this.value = quote ? quote(value) : value;
+    this.matchType = matchType;
+  }
+
   public MatchCriteria(Table table, String columnname, String matchType, boolean value) {
     this(table.getColumn(columnname), matchType, value);
   }

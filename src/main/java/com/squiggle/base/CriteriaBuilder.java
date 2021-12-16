@@ -227,6 +227,14 @@ public class CriteriaBuilder {
 
     }
 
+    public CriteriaBuilder link(String srcTable, String dstTable, String linkedColumn) {
+        this.matchType = MatchCriteria.EQUALS;
+        return this.addCriteria(
+                new MatchCriteria(new Table(srcTable).getColumn(this.column.getName()), MatchCriteria.EQUALS,
+                        dstTable + "." + linkedColumn, false));
+
+    }
+
     public Criteria build() {
         return this.criteria;
     }

@@ -14,10 +14,12 @@ public class SelectQuery extends Query {
 
     protected boolean isDistinct = false;
     protected Set<Order> order;
+    protected List<JoinCriteria> joins;
 
     public SelectQuery() {
         super();
         this.order = new HashSet<>();
+        this.joins = new LinkedList<>();
 
     }
 
@@ -83,13 +85,13 @@ public class SelectQuery extends Query {
                 : this.addCriteria(condition.apply(criteriaBuilder).build());
     }
 
-    public SelectQuery addCriteria(Criteria criteria) {
+    private SelectQuery addCriteria(Criteria criteria) {
         this.criteria.add(criteria);
         return this;
     }
 
-    public SelectQuery removeCriteria(Criteria criteria) {
-        this.criteria.remove(criteria);
+    private SelectQuery addJoin(JoinCriteria joinCriteria) {
+        this.joins.add(joinCriteria);
         return this;
     }
 
@@ -97,19 +99,20 @@ public class SelectQuery extends Query {
      * Syntax sugar for addCriteria(JoinCriteria)
      */
     public SelectQuery join(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
-        return addCriteria(new JoinCriteria(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)));
+        return addJoin(new JoinCriteria(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
+                .from(destTable);
     }
 
     public SelectQuery join(String srcColumnname, String destTable, String destColumnname) {
         Table dstTable = new Table(destTable);
-        addCriteria(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)));
-        return this.from(dstTable);
+        return addJoin(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
     }
 
     public SelectQuery join(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
         Table dstTable = new Table(destTable, tableAlias);
-        addCriteria(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)));
-        return this.from(dstTable);
+        return addJoin(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
     }
 
     public SelectQuery order(Order order) {
@@ -184,6 +187,10 @@ public class SelectQuery extends Query {
         LinkedList<Table> linkedList = new LinkedList<>(allTables);
         Collections.reverse(linkedList);
         return linkedList;
+    }
+
+    public List<JoinCriteria> getJoins() {
+        return this.joins;
     }
 
 }

@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.squiggle.base.Column;
+import com.squiggle.base.JoinCriteria;
 import com.squiggle.base.Row;
+import com.squiggle.base.Table;
 import com.squiggle.output.Output;
 import com.squiggle.output.Outputable;
 import com.squiggle.queries.DeleteQuery;
@@ -54,7 +56,7 @@ public class SqlServerParser extends Parser {
 
         // Determine all tables used in query
         out.space();
-        appendList(out, selectQuery.getUsedTables(), ",");
+        addFroms(out, selectQuery.getUsedTables(), selectQuery.getJoins());
 
         // Add criteria
         if (selectQuery.listCriteria().size() > 0) {
@@ -68,12 +70,20 @@ public class SqlServerParser extends Parser {
 
         // Add order
         if (selectQuery.listOrder().size() > 0) {
-            out.print(" ORDER BY");
+            out.space();
+            out.print("ORDER BY");
 
             appendList(out, selectQuery.listOrder(), ",");
 
         }
 
+    }
+
+    private void addFroms(Output out, List<Table> usedTables, List<JoinCriteria> joins) {
+
+        for (JoinCriteria join : joins) {
+            out.print(join);
+        }
     }
 
     /**

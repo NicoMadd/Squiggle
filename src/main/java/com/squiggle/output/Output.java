@@ -48,8 +48,9 @@ public class Output {
         return this;
     }
 
-    public void space() {
+    public Output space() {
         result.append(' ');
+        return this;
     }
 
     public void indent() {
