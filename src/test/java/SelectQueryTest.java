@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.squiggle.Squiggle;
+import com.squiggle.exceptions.NoColumnsException;
+import com.squiggle.exceptions.NoTableException;
 import com.squiggle.queries.SelectQuery;
 
 public class SelectQueryTest {
@@ -11,14 +13,14 @@ public class SelectQueryTest {
     @Test
     public void noTableError() {
         SelectQuery select = Squiggle.Select();
-        Exception thrown = assertThrows(IllegalStateException.class, () -> select.toString());
-        assertTrue(thrown.getMessage().contains("Cannot make query without table"));
+        Exception thrown = assertThrows(NoTableException.class, () -> select.toString());
+        assertTrue(thrown.getMessage().contains("Cannot select column without table"));
     }
 
     @Test
     public void noSelectError() {
         SelectQuery select = Squiggle.Select().from("table");
-        Exception thrown = assertThrows(IllegalStateException.class, () -> select.toString());
+        Exception thrown = assertThrows(NoColumnsException.class, () -> select.toString());
         assertTrue(thrown.getMessage().contains("Cannot make query without related column"));
     }
 
@@ -56,11 +58,8 @@ public class SelectQueryTest {
                 select.toString());
     }
 
-    // TODO agregar que el join se haga como un join normal y no el producto
-    // cartesiano
     @Test
     public void twoJoinedTablesOneColumnSelect() {
-        // .join("table1", "table2", "column1").select("column2");
         SelectQuery select = Squiggle.Select().from("table1").select("column1").join("column1", "table2", "column2")
                 .select("column2");
         assertEquals(
