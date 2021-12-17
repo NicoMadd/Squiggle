@@ -5,6 +5,8 @@ import java.util.function.Function;
 
 import com.squiggle.Squiggle;
 import com.squiggle.base.*;
+import com.squiggle.exceptions.NoColumnsException;
+import com.squiggle.exceptions.NoTableException;
 import com.squiggle.output.*;
 import com.squiggle.parsers.Parser;
 
@@ -33,6 +35,7 @@ public abstract class Query implements Outputable {
 
     public String toString() {
         validate();
+        validateMain();
         return ToStringer.toString(this);
     }
 
@@ -42,12 +45,14 @@ public abstract class Query implements Outputable {
 
     // }
 
-    protected void validate() {
+    protected abstract void validate();
+
+    protected void validateMain() {
         if (this.baseTable == null) {
-            throw new IllegalStateException("Cannot make query without table");
+            throw new NoTableException("Cannot make query without table");
         }
         if (this.columns.size() == 0) {
-            throw new IllegalStateException("Cannot make query without related column");
+            throw new NoColumnsException("Cannot make query without related column");
         }
     }
 
