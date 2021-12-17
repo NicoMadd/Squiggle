@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import com.squiggle.base.*;
+import com.squiggle.exceptions.NoTableException;
 import com.squiggle.output.*;
 
 /**
@@ -48,13 +49,13 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery select(String columnName) {
-        validateSelect();
+        validate();
         return this.select(this.baseTable.getColumn(columnName));
     }
 
-    private void validateSelect() {
+    protected void validate() {
         if (this.baseTable == null) {
-            throw new IllegalStateException("Cannot select column without table");
+            throw new NoTableException("Cannot select column without table");
         }
     }
 

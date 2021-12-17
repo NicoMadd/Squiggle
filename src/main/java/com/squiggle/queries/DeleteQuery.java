@@ -27,4 +27,10 @@ public class DeleteQuery extends Query {
         return null;
     }
 
+    @Override
+    protected void validate() {
+        // TODO Auto-generated method stub
+
+    }
+
 }

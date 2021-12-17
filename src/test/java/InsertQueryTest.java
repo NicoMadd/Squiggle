@@ -6,22 +6,29 @@ import java.util.Date;
 import org.junit.Test;
 
 import com.squiggle.Squiggle;
+import com.squiggle.exceptions.NoTableException;
+import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.queries.InsertQuery;
+
+//TODO split this into multiple tests
 
 public class InsertQueryTest {
 
+        // TODO throw proper exception
         @Test
         public void noTableError() {
                 InsertQuery insert = Squiggle.Insert();
-                Exception thrown = assertThrows(IllegalStateException.class, () -> insert.toString());
+                Exception thrown = assertThrows(NoTableException.class, () -> insert.toString());
                 assertTrue(thrown.getMessage().contains("Cannot make query without table"));
         }
 
+        // TODO throw proper exception
+
         @Test
-        public void happyCase() {
-                Squiggle.Insert().into("table").to("column").value("value");
-                Squiggle.Insert().into("table").to("column1").to("column2").value("value1").value("value2").value(2)
-                                .value(3.0f);
+        public void noValuesError() {
+                InsertQuery insert = Squiggle.Insert().into("table");
+                Exception thrown = assertThrows(NoValuesInsertedException.class, () -> insert.toString());
+                assertTrue(thrown.getMessage().contains("Cannot make query without values"));
         }
 
         @Test

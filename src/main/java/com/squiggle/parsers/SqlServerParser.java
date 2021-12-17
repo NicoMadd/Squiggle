@@ -83,6 +83,21 @@ public class SqlServerParser extends Parser {
 
         for (JoinCriteria join : joins) {
             out.print(join);
+            // if table in usedTables, remove it
+            usedTables.remove(join.getSource().getTable());
+            usedTables.remove(join.getDest().getTable());
+
+        }
+
+        // iterate through all tables used in query and add them to the FROM clause and
+        // dont add , if its the last one
+        for (Iterator<Table> i = usedTables.iterator(); i.hasNext();) {
+            Table curr = i.next();
+            out.print(curr);
+            if (i.hasNext()) {
+                out.print(",");
+                out.space();
+            }
         }
     }
 

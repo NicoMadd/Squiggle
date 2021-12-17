@@ -2,6 +2,8 @@ package com.squiggle.queries;
 
 import java.util.*;
 import com.squiggle.base.*;
+import com.squiggle.exceptions.NoTableException;
+import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.output.*;
 import com.squiggle.types.DateType;
 import com.squiggle.types.DoubleType;
@@ -120,11 +122,21 @@ public class InsertQuery extends Query {
         return row;
     }
 
-    public void write(Output out) {
+    protected void validate() {
+        if (this.baseTable == null) {
+            throw new NoTableException("Cannot make query without table");
+        }
+
+        if (this.getRows().size() == 0) {
+            throw new NoValuesInsertedException("Cannot make query without values");
+        }
 
         if (this.getLastRow().getValuesCount() > 0)
             this.endRow();
+    }
 
+    public void write(Output out) {
+        validate();
         this.parser.insertQuery(this, out);
     }
 
