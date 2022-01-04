@@ -24,6 +24,10 @@ public class Squiggle {
         return new InsertQuery();
     }
 
+    public static CreateTableQuery CreateTable(String tableName) {
+        return new CreateTableQuery(tableName);
+    }
+
     public static void setParser(Parser parser) {
         Squiggle.parser = parser;
     }

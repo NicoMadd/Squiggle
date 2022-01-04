@@ -10,11 +10,12 @@ import com.squiggle.base.Row;
 import com.squiggle.base.Table;
 import com.squiggle.output.Output;
 import com.squiggle.output.Outputable;
+import com.squiggle.queries.CreateTableQuery;
 import com.squiggle.queries.DeleteQuery;
 import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
 import com.squiggle.queries.UpdateQuery;
-import com.squiggle.types.Type;
+import com.squiggle.types.values.TypeValue;
 
 public class SqlServerParser extends Parser {
 
@@ -105,7 +106,7 @@ public class SqlServerParser extends Parser {
      * Iterate through a Collection and append all entries (using .toString()) to a
      * StringBuffer.
      */
-    private void appendObjectList(Output out, List<Type> typeList, String separator) {
+    private void appendObjectList(Output out, List<TypeValue> typeList, String separator) {
 
         Integer length = typeList.size();
         for (int i = 0; i < length; i++) {
@@ -169,6 +170,21 @@ public class SqlServerParser extends Parser {
     @Override
     public void deleteQuery(Output out, DeleteQuery deleteQuery) {
         // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void createTableQuery(Output out, CreateTableQuery createTable) {
+        out.print("CREATE TABLE");
+        out.space();
+        out.print(createTable.getTable().getName());
+        out.space();
+
+        // Add columns definitions
+
+        out.print("(");
+        appendList(out, createTable.getColumnsDefs(), ",");
+        out.print(")");
 
     }
 
