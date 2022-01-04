@@ -1,4 +1,4 @@
-package com.squiggle.queries;
+package com.squiggle.interfaces;
 
 public interface Validatable {
 

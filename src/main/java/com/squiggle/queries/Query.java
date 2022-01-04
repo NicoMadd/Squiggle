@@ -6,6 +6,7 @@ import java.util.function.Function;
 import com.squiggle.base.*;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
+import com.squiggle.interfaces.Validatable;
 import com.squiggle.output.*;
 import com.squiggle.parsers.Parser;
 import com.squiggle.parsers.Parserable;

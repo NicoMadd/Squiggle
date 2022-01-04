@@ -1,39 +1,45 @@
 package com.squiggle.builders;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.squiggle.base.ColumnDef;
+import com.squiggle.constraints.Constraint;
+import com.squiggle.constraints.NotNullable;
+import com.squiggle.constraints.Nullable;
+import com.squiggle.constraints.PrimaryKey;
+import com.squiggle.constraints.Unique;
+import com.squiggle.constraints.Constraint.*;
 import com.squiggle.types.definitions.TypeDef;
 
 public class ColumnDefBuilder {
 
-    public static ColumnDefBuilder create(String name, TypeDef type) {
-        return new ColumnDefBuilder(name, type);
+    public static ColumnDefBuilder create(String name, TypeDef type, Boolean isPrimaryKey) {
+        return new ColumnDefBuilder();
     }
 
     private String name;
     private TypeDef type;
-
-    private ColumnDefBuilder(String name, TypeDef type) {
-        this.name = name;
-        this.type = type;
-    }
+    private List<Constraint> constraints;
 
     public ColumnDefBuilder() {
         this.name = null;
         this.type = null;
+        this.constraints = new LinkedList<>();
     }
 
     public ColumnDefBuilder name(String name) {
-        if (this.name != null) {
-            throw new IllegalStateException("Column name already set");
-        }
+        // if (this.name != null) {
+        // throw new IllegalStateException("Column name already set");
+        // }
         this.name = name;
         return this;
     }
 
     public ColumnDefBuilder type(TypeDef type) {
-        if (this.type != null) {
-            throw new IllegalStateException("Column type already set");
-        }
+        // if (this.type != null) {
+        // throw new IllegalStateException("Column type already set");
+        // }
         this.type = type;
         return this;
     }
@@ -52,12 +58,34 @@ public class ColumnDefBuilder {
     }
 
     public ColumnDef build() {
-        return new ColumnDef(name, type);
+        return new ColumnDef(name, type, constraints);
     }
 
     public ColumnDefBuilder reset() {
         this.name = null;
         this.type = null;
+        return this;
+    }
+
+    public ColumnDefBuilder primaryKey() {
+        this.constraints.add(new PrimaryKey());
+        return this;
+    }
+
+    // TODO check if nullable in list of constraints else add it
+
+    public ColumnDefBuilder notNullable() {
+        this.constraints.add(new NotNullable());
+        return this;
+    }
+
+    public ColumnDefBuilder nullable() {
+        this.constraints.add(new Nullable());
+        return this;
+    }
+
+    public ColumnDefBuilder unique() {
+        this.constraints.add(new Unique());
         return this;
     }
 

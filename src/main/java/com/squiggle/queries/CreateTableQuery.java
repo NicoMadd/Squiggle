@@ -7,6 +7,7 @@ import com.squiggle.base.ColumnDef;
 import com.squiggle.base.Table;
 import com.squiggle.builders.ColumnDefBuilder;
 import com.squiggle.exceptions.NoColumnsException;
+import com.squiggle.interfaces.Validatable;
 import com.squiggle.output.Output;
 import com.squiggle.output.Outputable;
 import com.squiggle.output.ToStringer;
@@ -81,9 +82,33 @@ public class CreateTableQuery extends Parserable implements Outputable, Validata
         return this;
     }
 
+    public CreateTableQuery primaryKey() {
+        this.columnDefBuilder.primaryKey();
+        return this;
+    }
+
+    public CreateTableQuery pk() {
+        return this.primaryKey();
+    }
+
     public CreateTableQuery define() {
         this.columnsDefs.add(this.columnDefBuilder.build());
         this.columnDefBuilder.reset();
+        return this;
+    }
+
+    public CreateTableQuery nullable() {
+        this.columnDefBuilder.nullable();
+        return this;
+    }
+
+    public CreateTableQuery notNullable() {
+        this.columnDefBuilder.notNullable();
+        return this;
+    }
+
+    public CreateTableQuery unique() {
+        this.columnDefBuilder.unique();
         return this;
     }
 
