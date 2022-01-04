@@ -46,7 +46,6 @@ public class CreateTableQuery extends Parserable implements Outputable, Validata
     }
 
     public void validate() {
-        System.out.println(this.columnsDefs.size());
         if (this.columnsDefs.size() == 0) {
             throw new NoColumnsException("Cannot create table without columns");
         }

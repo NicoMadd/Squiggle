@@ -84,7 +84,7 @@ public class CreateTableTest {
                                 .column("column2").date().define()
                                 .column("column3").date().define();
                 assertEquals(
-                                "CREATE TABLE table (column1 int, column2 int, column3 int)",
+                                "CREATE TABLE table (column1 date, column2 date, column3 date)",
                                 createTableQuery.toString());
         }
 
@@ -95,7 +95,7 @@ public class CreateTableTest {
                                 .column("column2").floatingPoint().define()
                                 .column("column3").floatingPoint().define();
                 assertEquals(
-                                "CREATE TABLE table (column1 int, column2 int, column3 int)",
+                                "CREATE TABLE table (column1 float, column2 float, column3 float)",
                                 createTableQuery.toString());
         }
 
@@ -106,7 +106,7 @@ public class CreateTableTest {
                                 .column("column2").varchar().define()
                                 .column("column3").varchar().define();
                 assertEquals(
-                                "CREATE TABLE table (column1 int, column2 int, column3 int)",
+                                "CREATE TABLE table (column1 varchar(255), column2 varchar(255), column3 varchar(255))",
                                 createTableQuery.toString());
         }
 

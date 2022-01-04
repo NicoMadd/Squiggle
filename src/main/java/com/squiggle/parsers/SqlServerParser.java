@@ -138,8 +138,6 @@ public class SqlServerParser extends Parser {
 
         // add values
         out.print("VALUES ");
-        System.out.print("rows.size() = " + insertQuery.getRows().size());
-        System.out.print(insertQuery.getLastRow().toString());
         List<Row> rows = insertQuery.getRows();
         Integer length = rows.size();
         Integer i = 0;
