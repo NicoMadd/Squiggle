@@ -3,17 +3,17 @@ package com.squiggle.base;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.squiggle.types.Type;
+import com.squiggle.types.values.TypeValue;
 
 public class Row {
 
-    List<Type> values;
+    List<TypeValue> values;
 
     public Row() {
-        values = new LinkedList<Type>();
+        values = new LinkedList<TypeValue>();
     }
 
-    public void addValue(Type o) {
+    public void addValue(TypeValue o) {
         values.add(o);
     }
 
@@ -21,7 +21,7 @@ public class Row {
         return values.size();
     }
 
-    public List<Type> getValues() {
+    public List<TypeValue> getValues() {
         return this.values;
     }
 
