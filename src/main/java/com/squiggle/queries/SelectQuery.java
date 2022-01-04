@@ -53,7 +53,7 @@ public class SelectQuery extends Query {
         return this.select(this.baseTable.getColumn(columnName));
     }
 
-    protected void validate() {
+    public void validate() {
         if (this.baseTable == null) {
             throw new NoTableException("Cannot select column without table");
         }

@@ -5,12 +5,12 @@ import com.squiggle.base.*;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.output.*;
-import com.squiggle.types.DateType;
-import com.squiggle.types.DoubleType;
-import com.squiggle.types.FloatType;
-import com.squiggle.types.IntegerType;
-import com.squiggle.types.NullType;
-import com.squiggle.types.StringType;
+import com.squiggle.types.values.DateTypeValue;
+import com.squiggle.types.values.DoubleTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
+import com.squiggle.types.values.IntegerTypeValue;
+import com.squiggle.types.values.NullTypeValue;
+import com.squiggle.types.values.StringTypeValue;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
@@ -67,32 +67,32 @@ public class InsertQuery extends Query {
     // }
 
     public InsertQuery value(String str) {
-        row.addValue(new StringType(str));
+        row.addValue(new StringTypeValue(str));
         updateRowStatus();
         return this;
 
     }
 
     public InsertQuery value(Integer integer) {
-        row.addValue(new IntegerType(integer));
+        row.addValue(new IntegerTypeValue(integer));
         updateRowStatus();
         return this;
     }
 
     public InsertQuery value(Date date) {
-        row.addValue(new DateType(date));
+        row.addValue(new DateTypeValue(date));
         updateRowStatus();
         return this;
     }
 
     public InsertQuery value(Double dbl) {
-        row.addValue(new DoubleType(dbl));
+        row.addValue(new DoubleTypeValue(dbl));
         updateRowStatus();
         return this;
     }
 
     public InsertQuery value(Float flt) {
-        row.addValue(new FloatType(flt));
+        row.addValue(new FloatTypeValue(flt));
         updateRowStatus();
         return this;
     }
@@ -100,7 +100,7 @@ public class InsertQuery extends Query {
     public InsertQuery endRow() {
         // Fill row with nulls if not enough values were added
         while (row.getValuesCount() < columns.size()) {
-            row.addValue(new NullType());
+            row.addValue(new NullTypeValue());
         }
         updateRowStatus();
         return this;
@@ -122,7 +122,7 @@ public class InsertQuery extends Query {
         return row;
     }
 
-    protected void validate() {
+    public void validate() {
         if (this.baseTable == null) {
             throw new NoTableException("Cannot make query without table");
         }
