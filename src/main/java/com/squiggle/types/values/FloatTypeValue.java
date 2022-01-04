@@ -1,12 +1,12 @@
-package com.squiggle.types;
+package com.squiggle.types.values;
 
 import com.squiggle.output.Output;
 
-public class FloatType extends Type {
+public class FloatTypeValue implements TypeValue {
 
     Float floatValue;
 
-    public FloatType(Float floatValue) {
+    public FloatTypeValue(Float floatValue) {
         this.floatValue = floatValue;
     }
 

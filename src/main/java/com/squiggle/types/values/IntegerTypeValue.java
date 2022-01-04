@@ -1,12 +1,12 @@
-package com.squiggle.types;
+package com.squiggle.types.values;
 
 import com.squiggle.output.Output;
 
-public class IntegerType extends Type {
+public class IntegerTypeValue implements TypeValue {
 
     Integer intValue;
 
-    public IntegerType(Integer intValue) {
+    public IntegerTypeValue(Integer intValue) {
         this.intValue = intValue;
     }
 

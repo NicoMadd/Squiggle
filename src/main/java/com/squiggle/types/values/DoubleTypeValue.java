@@ -1,12 +1,12 @@
-package com.squiggle.types;
+package com.squiggle.types.values;
 
 import com.squiggle.output.Output;
 
-public class DoubleType extends Type {
+public class DoubleTypeValue implements TypeValue {
 
     Double doubleValue;
 
-    public DoubleType(Double doubleValue) {
+    public DoubleTypeValue(Double doubleValue) {
         this.doubleValue = doubleValue;
     }
 

@@ -1,10 +1,10 @@
-package com.squiggle.types;
+package com.squiggle.types.values;
 
 import com.squiggle.output.Output;
 
-public class NullType extends Type {
+public class NullTypeValue implements TypeValue {
 
-    public NullType() {
+    public NullTypeValue() {
     }
 
     @Override
