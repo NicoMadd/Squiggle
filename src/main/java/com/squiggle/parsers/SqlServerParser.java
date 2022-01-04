@@ -16,6 +16,7 @@ import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
 import com.squiggle.queries.UpdateQuery;
 import com.squiggle.types.values.TypeValue;
+import com.squiggle.utils.TriConsumer;
 
 public class SqlServerParser extends Parser {
 
@@ -23,20 +24,26 @@ public class SqlServerParser extends Parser {
     }
 
     /**
+     * Iterate through a Collection and execute a function on each entry.
+     */
+    private void iterateList(Output out, Collection<? extends Outputable> outputables,
+            TriConsumer<Output, ? super Outputable, Boolean> consumer) {
+        for (Iterator<? extends Outputable> i = outputables.iterator(); i.hasNext();)
+            consumer.accept(out, i.next(), i.hasNext());
+    }
+
+    /**
      * Iterate through a Collection and append all entries (using .toString()) to a
      * StringBuffer.
      */
-    private void appendList(Output out, Collection<? extends Outputable> outputables, String seperator) {
-        for (Iterator<? extends Outputable> i = outputables.iterator(); i.hasNext();) {
-            Outputable curr = (Outputable) i.next();
-            curr.write(out);
-            if (i.hasNext()) {
-                out.print(seperator);
+    private void appendList(Output out, Collection<? extends Outputable> outputables, String separator) {
+        this.iterateList(out, outputables, (output, current, hasNext) -> {
+            current.write(out);
+            if (hasNext) {
+                out.print(separator);
                 out.space();
-
             }
-        }
-
+        });
     }
 
     @Override
@@ -82,24 +89,26 @@ public class SqlServerParser extends Parser {
 
     private void addFroms(Output out, List<Table> usedTables, List<JoinCriteria> joins) {
 
-        for (JoinCriteria join : joins) {
-            out.print(join);
+        iterateList(out, joins, (output, currentJoin, hasNext) -> {
+            out.print(currentJoin);
+            JoinCriteria join = (JoinCriteria) currentJoin;
             // if table in usedTables, remove it
             usedTables.remove(join.getSource().getTable());
             usedTables.remove(join.getDest().getTable());
 
-        }
+        });
 
         // iterate through all tables used in query and add them to the FROM clause and
         // dont add , if its the last one
-        for (Iterator<Table> i = usedTables.iterator(); i.hasNext();) {
-            Table curr = i.next();
-            out.print(curr);
-            if (i.hasNext()) {
+
+        iterateList(out, usedTables, (output, currentTable, hasNext) -> {
+            currentTable.write(out);
+            if (hasNext) {
                 out.print(",");
                 out.space();
             }
-        }
+        });
+
     }
 
     /**
@@ -137,10 +146,12 @@ public class SqlServerParser extends Parser {
         out.space();
 
         // add values
+
         out.print("VALUES ");
         List<Row> rows = insertQuery.getRows();
         Integer length = rows.size();
         Integer i = 0;
+
         for (Row row : rows) {
             out.print("(");
             appendObjectList(out, row.getValues(), ",");
