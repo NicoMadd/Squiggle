@@ -242,4 +242,10 @@ public class UpdateQuery extends Query {
         return null;
     }
 
+    @Override
+    public void validate() {
+        // TODO Auto-generated method stub
+
+    }
+
 }

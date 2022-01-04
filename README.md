@@ -17,6 +17,13 @@ The version I took is the 1.4.0. So... next release will be 1.5.0 to make differ
 
 In the future, I hope it can be used to make INSERTs, UPDATEs, DELETEs and also be "intelligent" enough to optimize the query made.
 
+## Parsers
+
+1. SQL SERVER - [X]
+2. MySQL - [ ]
+3. Oracle - [ ]
+4. PostgreSQL - [ ]
+
 ## TODOs
 
 1. SELECT - [X]
@@ -24,7 +31,7 @@ In the future, I hope it can be used to make INSERTs, UPDATEs, DELETEs and also 
 3. UPDATE - [ ]
 4. DELETE - [ ]
 5. GROUP BY - [ ]
-6. CREATE TABLE - [ ]
+6. CREATE TABLE - [X]
 7. CREATE VIEW - [ ]
 8. CREATE COMMIT - [ ]
 9. CREATE TRANSACTION - [ ]
