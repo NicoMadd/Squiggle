@@ -61,11 +61,6 @@ public class InsertQuery extends Query {
         return this.to(table.getColumn(columname));
     }
 
-    // public InsertQuery removeColumn(Column column) {
-    // columns.remove(column);
-    // return this;
-    // }
-
     public InsertQuery value(String str) {
         row.addValue(new StringTypeValue(str));
         updateRowStatus();

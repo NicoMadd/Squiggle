@@ -9,7 +9,6 @@ import com.squiggle.constraints.NotNullable;
 import com.squiggle.constraints.Nullable;
 import com.squiggle.constraints.PrimaryKey;
 import com.squiggle.constraints.Unique;
-import com.squiggle.constraints.Constraint.*;
 import com.squiggle.types.definitions.TypeDef;
 
 public class ColumnDefBuilder {
