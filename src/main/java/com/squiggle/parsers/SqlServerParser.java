@@ -3,6 +3,7 @@ package com.squiggle.parsers;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.squiggle.base.Column;
 import com.squiggle.base.JoinCriteria;
@@ -24,9 +25,20 @@ public class SqlServerParser extends Parser {
     }
 
     /**
-     * Iterate through a Collection and execute a function on each entry.
+     * Iterate through a Set and execute a function on each
+     * entry.
      */
-    private void iterateList(Output out, Collection<? extends Outputable> outputables,
+    private void iterateEntryCollection(Output out, Collection<Entry<? extends Outputable, ? extends Outputable>> set,
+            TriConsumer<Output, Entry<? extends Outputable, ? extends Outputable>, Boolean> consumer) {
+        for (Iterator<Entry<? extends Outputable, ? extends Outputable>> i = set.iterator(); i.hasNext();)
+            consumer.accept(out, i.next(), i.hasNext());
+    }
+
+    /**
+     * Iterate through an Outputable Collection and execute a function on each
+     * entry.
+     */
+    private void iterateOutputableCollection(Output out, Collection<? extends Outputable> outputables,
             TriConsumer<Output, ? super Outputable, Boolean> consumer) {
         for (Iterator<? extends Outputable> i = outputables.iterator(); i.hasNext();)
             consumer.accept(out, i.next(), i.hasNext());
@@ -37,7 +49,7 @@ public class SqlServerParser extends Parser {
      * StringBuffer.
      */
     private void appendList(Output out, Collection<? extends Outputable> outputables, String separator) {
-        this.iterateList(out, outputables, (output, current, hasNext) -> {
+        this.iterateOutputableCollection(out, outputables, (output, current, hasNext) -> {
             current.write(out);
             if (hasNext) {
                 out.print(separator);
@@ -89,7 +101,7 @@ public class SqlServerParser extends Parser {
 
     private void addFroms(Output out, List<Table> usedTables, List<JoinCriteria> joins) {
 
-        iterateList(out, joins, (output, currentJoin, hasNext) -> {
+        iterateOutputableCollection(out, joins, (output, currentJoin, hasNext) -> {
             out.print(currentJoin);
             JoinCriteria join = (JoinCriteria) currentJoin;
             // if table in usedTables, remove it
@@ -101,7 +113,7 @@ public class SqlServerParser extends Parser {
         // iterate through all tables used in query and add them to the FROM clause and
         // dont add , if its the last one
 
-        iterateList(out, usedTables, (output, currentTable, hasNext) -> {
+        iterateOutputableCollection(out, usedTables, (output, currentTable, hasNext) -> {
             currentTable.write(out);
             if (hasNext) {
                 out.print(",");
@@ -172,8 +184,32 @@ public class SqlServerParser extends Parser {
 
     @Override
     public void updateQuery(UpdateQuery updateQuery, Output out) {
-        // TODO Auto-generated method stub
+        out.print("UPDATE");
+        out.space();
+        out.print(updateQuery.getBaseTable());
+        out.space();
+        out.print("SET");
+        out.space();
 
+        iterateEntryCollection(out, updateQuery.getEntries(), (o, entry, hasNext) -> {
+            o.print(entry.getKey());
+            o.print("=");
+            entry.getValue().write(o);
+            if (hasNext) {
+                o.print(",");
+                o.space();
+            }
+        });
+
+        // Add criteria
+        if (updateQuery.listCriteria().size() > 0) {
+            out.space();
+            out.print("WHERE");
+            out.space();
+
+            appendList(out, updateQuery.listCriteria(), "AND");
+
+        }
     }
 
     @Override

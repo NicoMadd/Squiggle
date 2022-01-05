@@ -35,7 +35,7 @@ public class CriteriaBuilder {
         return this.addCriteria(new OR(this.criteria, new MatchCriteria(this.column, this.matchType, value)));
     }
 
-    public CriteriaBuilder or(int value) {
+    public CriteriaBuilder or(Integer value) {
         return this.addCriteria(new OR(this.criteria, new MatchCriteria(this.column, this.matchType, value)));
     }
 
@@ -53,7 +53,7 @@ public class CriteriaBuilder {
 
     }
 
-    public CriteriaBuilder and(int value) {
+    public CriteriaBuilder and(Integer value) {
         return this.addCriteria(new AND(this.criteria, new MatchCriteria(this.column, this.matchType, value)));
 
     }
@@ -73,7 +73,7 @@ public class CriteriaBuilder {
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.EQUALS, value));
     }
 
-    public CriteriaBuilder equals(int value) {
+    public CriteriaBuilder equals(Integer value) {
         this.matchType = MatchCriteria.EQUALS;
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.EQUALS, value));
     }
@@ -95,7 +95,7 @@ public class CriteriaBuilder {
 
     }
 
-    public CriteriaBuilder greater(int value) {
+    public CriteriaBuilder greater(Integer value) {
         this.matchType = MatchCriteria.GREATER;
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.GREATER, value));
 
@@ -119,7 +119,7 @@ public class CriteriaBuilder {
 
     }
 
-    public CriteriaBuilder greaterEqual(int value) {
+    public CriteriaBuilder greaterEqual(Integer value) {
         this.matchType = MatchCriteria.GREATEREQUAL;
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.GREATEREQUAL, value));
 
@@ -143,7 +143,7 @@ public class CriteriaBuilder {
 
     }
 
-    public CriteriaBuilder less(int value) {
+    public CriteriaBuilder less(Integer value) {
         this.matchType = MatchCriteria.LESS;
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.LESS, value));
 
@@ -167,7 +167,7 @@ public class CriteriaBuilder {
 
     }
 
-    public CriteriaBuilder lessEqual(int value) {
+    public CriteriaBuilder lessEqual(Integer value) {
         this.matchType = MatchCriteria.LESSEQUAL;
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.LESSEQUAL, value));
 
@@ -191,7 +191,7 @@ public class CriteriaBuilder {
 
     }
 
-    public CriteriaBuilder like(int value) {
+    public CriteriaBuilder like(Integer value) {
         this.matchType = MatchCriteria.LIKE;
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.LIKE, value));
 
@@ -215,7 +215,7 @@ public class CriteriaBuilder {
 
     }
 
-    public CriteriaBuilder notEqual(int value) {
+    public CriteriaBuilder notEqual(Integer value) {
         this.matchType = MatchCriteria.NOTEQUAL;
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.NOTEQUAL, value));
 

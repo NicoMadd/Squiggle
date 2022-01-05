@@ -1,7 +1,6 @@
 package com.squiggle.queries;
 
 import java.util.*;
-import java.util.function.Function;
 
 import com.squiggle.base.*;
 import com.squiggle.exceptions.NoColumnsException;
@@ -39,12 +38,6 @@ public abstract class Query extends Parserable implements Outputable, Validatabl
         return ToStringer.toString(this);
     }
 
-    // public String toString(Boolean indent) {
-    // validate();
-    // return ToStringer.toString(this);
-
-    // }
-
     protected void validateMain() {
         if (this.baseTable == null) {
             throw new NoTableException("Cannot make query without table");
@@ -63,22 +56,6 @@ public abstract class Query extends Parserable implements Outputable, Validatabl
     }
 
     public abstract List<Table> getUsedTables();
-
-    public Query where(String columnName, Function<CriteriaBuilder, CriteriaBuilder> condition) {
-        CriteriaBuilder criteriaBuilder = new CriteriaBuilder(new Column(this.baseTable, columnName));
-        return condition.apply(criteriaBuilder).build().getClass() == NoCriteria.class ? this
-                : this.addCriteria(condition.apply(criteriaBuilder).build());
-    }
-
-    private Query addCriteria(Criteria criteria) {
-        this.criteria.add(criteria);
-        return this;
-    }
-
-    // private Query removeCriteria(Criteria criteria) {
-    // this.criteria.remove(criteria);
-    // return this;
-    // }
 
     public List<Criteria> listCriteria() {
         return Collections.unmodifiableList(criteria);
