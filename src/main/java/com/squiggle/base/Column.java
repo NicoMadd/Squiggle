@@ -19,8 +19,9 @@ public class Column implements Outputable {
         this.writeWithTable = true;
     }
 
-    public void writeWithTable(Boolean writeWithTable) {
+    public Column writeWithTable(Boolean writeWithTable) {
         this.writeWithTable = writeWithTable;
+        return this;
     }
 
     public Table getTable() {

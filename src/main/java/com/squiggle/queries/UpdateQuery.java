@@ -1,85 +1,89 @@
 package com.squiggle.queries;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.squiggle.base.*;
+import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.output.*;
+import com.squiggle.types.values.DateTypeValue;
+import com.squiggle.types.values.DoubleTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
+import com.squiggle.types.values.IntegerTypeValue;
+import com.squiggle.types.values.StringTypeValue;
+import com.squiggle.types.values.TypeValue;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
  * @author nmadeo - Nicolas Madeo
  */
+
+// TODO Refactor a algo mas generico con las rows y los values. Las que estan en
+// update y las de insert
+// se tendria que poder relacion una columna con uno o muchos valores.
 public class UpdateQuery extends Query {
 
-    public static final int indentSize = 4;
-
-    private Table baseTable;
-    private List columns;
-    private boolean isDistinct = false;
-    private List criteria;
-    private List order;
+    HashMap<Column, TypeValue> values;
+    Column lastColumn;
 
     public UpdateQuery() {
-        // this.table = table;
-        columns = new ArrayList();
-        criteria = new ArrayList();
-        order = new ArrayList();
+        super();
+        this.values = new LinkedHashMap<Column, TypeValue>();
+        this.lastColumn = null;
+
     }
 
-    public UpdateQuery from(Table table) {
+    public UpdateQuery table(Table table) {
         this.baseTable = table;
         return this;
     }
 
-    public UpdateQuery from(String tableName, String alias) {
+    public UpdateQuery table(String tableName, String alias) {
         this.baseTable = new Table(tableName, alias);
         return this;
     }
 
-    public UpdateQuery from(String tableName) {
+    public UpdateQuery table(String tableName) {
         this.baseTable = new Table(tableName);
         return this;
     }
 
-    public Table getBaseTable() {
-        return baseTable;
-    }
-
-    public UpdateQuery select(Column column) {
-        columns.add(column);
+    public UpdateQuery set(String column) {
+        this.lastColumn = this.baseTable.getColumn(column);
+        this.columns.add(this.lastColumn);
         return this;
     }
 
-    public UpdateQuery select(String columnName) {
-        if (this.baseTable == null) {
-            throw new IllegalStateException("Cannot select column without table");
-        }
-        return this.select(this.baseTable.getColumn(columnName));
-    }
-
-    /**
-     * Syntax sugar for select(Column).
-     */
-    public UpdateQuery select(Table table, String columname) {
-        return this.select(table.getColumn(columname));
-    }
-
-    public UpdateQuery removeColumn(Column column) {
-        columns.remove(column);
+    public UpdateQuery set(Column column) {
+        this.lastColumn = column;
+        this.columns.add(column);
         return this;
     }
 
-    public List listColumns() {
-        return Collections.unmodifiableList(columns);
+    public UpdateQuery to(Date date) {
+        this.values.put(this.lastColumn, new DateTypeValue(date));
+        return this;
     }
 
-    public boolean isDistinct() {
-        return isDistinct;
+    public UpdateQuery to(String string) {
+        this.values.put(this.lastColumn, new StringTypeValue(string));
+        return this;
     }
 
-    public UpdateQuery setDistinct(boolean distinct) {
-        isDistinct = distinct;
+    public UpdateQuery to(Integer integer) {
+        this.values.put(this.lastColumn, new IntegerTypeValue(integer));
+        return this;
+    }
+
+    public UpdateQuery to(Float floatValue) {
+        this.values.put(this.lastColumn, new FloatTypeValue(floatValue));
+        return this;
+    }
+
+    public UpdateQuery to(Double doubleValue) {
+        this.values.put(this.lastColumn, new DoubleTypeValue(doubleValue));
         return this;
     }
 
@@ -89,151 +93,27 @@ public class UpdateQuery extends Query {
                 : this.addCriteria(condition.apply(criteriaBuilder).build());
     }
 
-    public UpdateQuery addCriteria(Criteria criteria) {
+    private UpdateQuery addCriteria(Criteria criteria) {
         this.criteria.add(criteria);
         return this;
     }
 
-    public UpdateQuery removeCriteria(Criteria criteria) {
-        this.criteria.remove(criteria);
-        return this;
-    }
-
-    public List listCriteria() {
-        return Collections.unmodifiableList(criteria);
-    }
-
-    /**
-     * Syntax sugar for addCriteria(JoinCriteria)
-     */
-    public UpdateQuery join(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
-        return addCriteria(new JoinCriteria(srcTable.getColumn(srcColumnname),
-                destTable.getColumn(destColumnname)));
-    }
-
-    public UpdateQuery join(String srcColumnname, String destTable, String destColumnname) {
-        Table dstTable = new Table(destTable);
-        addCriteria(new JoinCriteria(this.baseTable.getColumn(srcColumnname),
-                dstTable.getColumn(destColumnname)));
-        return this.from(dstTable);
-    }
-
-    public UpdateQuery join(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
-        Table dstTable = new Table(destTable, tableAlias);
-        addCriteria(new JoinCriteria(this.baseTable.getColumn(srcColumnname),
-                dstTable.getColumn(destColumnname)));
-        return this.from(dstTable);
-    }
-
-    public UpdateQuery order(Order order) {
-        this.order.add(order);
-        return this;
-    }
-
-    public UpdateQuery order(String columnName, Boolean orderDirection) {
-        Order order = new Order(new Column(this.baseTable, columnName),
-                orderDirection);
-        this.order.add(order);
-        return this;
-    }
-
-    public UpdateQuery order(String columnName, String tableName, Boolean orderDirection) {
-        Order order = new Order(new Column(new Table(tableName), columnName),
-                orderDirection);
-        this.order.add(order);
-        return this;
-    }
-
-    /**
-     * Syntax sugar for order(Order).
-     */
-    public UpdateQuery order(Table table, String columnname, boolean ascending) {
-        return UpdateQuery.this.order(new Order(table.getColumn(columnname),
-                ascending));
-    }
-
-    public UpdateQuery removeOrder(Order order) {
-        this.order.remove(order);
-        return this;
-    }
-
-    public List listOrder() {
-        return Collections.unmodifiableList(order);
-    }
-
     public void write(Output out) {
+        validate();
         this.parser.updateQuery(this, out);
     }
 
-    /**
-     * Iterate through a Collection and append all entries (using .toString()) to
-     * a
-     * StringBuffer.
-     */
-    private void appendList(Output out, Collection collection, String seperator) {
-        Iterator i = collection.iterator();
-        boolean hasNext = i.hasNext();
-
-        while (hasNext) {
-            Outputable curr = (Outputable) i.next();
-            hasNext = i.hasNext();
-            curr.write(out);
-            out.print(' ');
-            if (hasNext) {
-                out.print(seperator);
-            }
-            out.println();
-        }
+    @Override
+    public void validate() {
+        // TODO Auto-generated method stub
     }
 
-    /**
-     * Find all the tables used in the query (from columns, criteria and order).
-     *
-     * @return List of {@link com.squiggle.base.systech.Squiggle.Table}s
-     */
-    private List findAllUsedTables() {
-
-        List allTables = new ArrayList();
-        allTables.add(baseTable);
-
-        { // Get all tables used by columns
-            Iterator i = columns.iterator();
-            while (i.hasNext()) {
-                Table curr = ((Column) i.next()).getTable();
-                if (!allTables.contains(curr)) {
-                    allTables.add(curr);
-                }
-            }
+    @Override
+    protected void validateMain() {
+        super.validateMain();
+        if (this.columns.size() == 0) {
+            throw new NoColumnsException("Cannot make query without related column");
         }
-
-        { // Get all tables used by criteria
-            Iterator i = criteria.iterator();
-            while (i.hasNext()) {
-                try {
-                    JoinCriteria curr = (JoinCriteria) i.next();
-                    if (!allTables.contains(curr.getSource().getTable())) {
-                        allTables.add(curr.getSource().getTable());
-                    }
-                    if (!allTables.contains(curr.getDest().getTable())) {
-                        allTables.add(curr.getDest().getTable());
-                    }
-                } catch (ClassCastException e) {
-                } // not a JoinCriteria
-            }
-        }
-
-        { // Get all tables used by columns
-            Iterator i = order.iterator();
-            while (i.hasNext()) {
-                Order curr = (Order) i.next();
-                Table c = curr.getColumn().getTable();
-                if (!allTables.contains(c)) {
-                    allTables.add(c);
-                }
-            }
-        }
-
-        return allTables;
     }
 
     @Override
@@ -242,4 +122,7 @@ public class UpdateQuery extends Query {
         return null;
     }
 
+    public Collection<Entry<? extends Outputable, ? extends Outputable>> getEntries() {
+        return this.values.entrySet().stream().collect(Collectors.toList());
+    }
 }

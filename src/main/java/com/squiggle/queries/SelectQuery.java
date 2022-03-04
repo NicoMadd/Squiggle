@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import com.squiggle.base.*;
+import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.output.*;
 
@@ -53,9 +54,17 @@ public class SelectQuery extends Query {
         return this.select(this.baseTable.getColumn(columnName));
     }
 
-    protected void validate() {
+    public void validate() {
         if (this.baseTable == null) {
             throw new NoTableException("Cannot select column without table");
+        }
+    }
+
+    @Override
+    protected void validateMain() {
+        super.validateMain();
+        if (this.columns.size() == 0) {
+            throw new NoColumnsException("Cannot make query without related column");
         }
     }
 

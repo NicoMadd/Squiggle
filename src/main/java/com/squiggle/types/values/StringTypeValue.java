@@ -1,12 +1,12 @@
-package com.squiggle.types;
+package com.squiggle.types.values;
 
 import com.squiggle.output.Output;
 
-public class StringType extends Type {
+public class StringTypeValue implements TypeValue {
 
     String stringValue;
 
-    public StringType(String stringValue) {
+    public StringTypeValue(String stringValue) {
         this.stringValue = stringValue;
     }
 
