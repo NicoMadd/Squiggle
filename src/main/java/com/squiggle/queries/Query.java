@@ -42,9 +42,6 @@ public abstract class Query extends Parserable implements Outputable, Validatabl
         if (this.baseTable == null) {
             throw new NoTableException("Cannot make query without table");
         }
-        if (this.columns.size() == 0) {
-            throw new NoColumnsException("Cannot make query without related column");
-        }
     }
 
     public Table getBaseTable() {

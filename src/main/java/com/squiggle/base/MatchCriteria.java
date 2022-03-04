@@ -30,6 +30,8 @@ public class MatchCriteria extends Criteria {
 
   private String value;
 
+  private static String dateFormat = "yyyy-MM-dd HH:mm:ss.S";
+
   public MatchCriteria(Column column, String matchType, boolean value) {
     this.column = column;
     this.value = String.valueOf(value);
@@ -48,7 +50,7 @@ public class MatchCriteria extends Criteria {
    * @param operand  the date literal to use in the comparison.
    */
   public MatchCriteria(Column column, String operator, Date operand) {
-    this(column, operator, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(operand));
+    this(column, operator, getDateFormat().format(operand));
   }
 
   public MatchCriteria(Column column, String matchType, float value) {
@@ -115,5 +117,9 @@ public class MatchCriteria extends Criteria {
 
   public void write(Output out) {
     out.print(column).print(' ').print(matchType).print(' ').print(value);
+  }
+
+  public static SimpleDateFormat getDateFormat() {
+    return new SimpleDateFormat(MatchCriteria.dateFormat);
   }
 }

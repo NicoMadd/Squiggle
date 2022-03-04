@@ -28,7 +28,7 @@ In the future, I hope it can be used to make INSERTs, UPDATEs, DELETEs and also 
 
 1. SELECT - [X]
 2. INSERT - [X]
-3. UPDATE - [ ]
+3. UPDATE - [X]
 4. DELETE - [ ]
 5. GROUP BY - [ ]
 6. CREATE TABLE - [X]

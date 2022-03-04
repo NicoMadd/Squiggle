@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.squiggle.base.*;
+import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.output.*;
 import com.squiggle.types.values.DateTypeValue;
 import com.squiggle.types.values.DoubleTypeValue;
@@ -105,7 +106,14 @@ public class UpdateQuery extends Query {
     @Override
     public void validate() {
         // TODO Auto-generated method stub
+    }
 
+    @Override
+    protected void validateMain() {
+        super.validateMain();
+        if (this.columns.size() == 0) {
+            throw new NoColumnsException("Cannot make query without related column");
+        }
     }
 
     @Override

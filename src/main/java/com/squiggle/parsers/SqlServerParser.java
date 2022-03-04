@@ -214,7 +214,18 @@ public class SqlServerParser extends Parser {
 
     @Override
     public void deleteQuery(Output out, DeleteQuery deleteQuery) {
-        // TODO Auto-generated method stub
+        out.print("DELETE FROM");
+        out.space();
+        out.print(deleteQuery.getBaseTable());
+        out.space();
+
+        // Add criteria
+
+        if (deleteQuery.listCriteria().size() > 0) {
+            out.print("WHERE");
+            out.space();
+            appendList(out, deleteQuery.listCriteria(), " AND");
+        }
 
     }
 

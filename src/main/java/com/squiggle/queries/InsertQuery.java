@@ -2,6 +2,7 @@ package com.squiggle.queries;
 
 import java.util.*;
 import com.squiggle.base.*;
+import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.output.*;
@@ -128,6 +129,14 @@ public class InsertQuery extends Query {
 
         if (this.getLastRow().getValuesCount() > 0)
             this.endRow();
+    }
+
+    @Override
+    protected void validateMain() {
+        super.validateMain();
+        if (this.columns.size() == 0) {
+            throw new NoColumnsException("Cannot make query without related column");
+        }
     }
 
     public void write(Output out) {

@@ -63,6 +63,7 @@ public class ColumnDefBuilder {
     public ColumnDefBuilder reset() {
         this.name = null;
         this.type = null;
+        this.constraints = new LinkedList<>();
         return this;
     }
 

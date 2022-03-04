@@ -9,19 +9,14 @@ import com.squiggle.exceptions.NoTableException;
 import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.queries.InsertQuery;
 
-//TODO split this into multiple tests
-
 public class InsertQueryTest {
 
-        // TODO throw proper exception
         @Test
         public void noTableError() {
                 InsertQuery insert = Squiggle.Insert();
                 Exception thrown = assertThrows(NoTableException.class, () -> insert.toString());
                 assertTrue(thrown.getMessage().contains("Cannot make query without table"));
         }
-
-        // TODO throw proper exception
 
         @Test
         public void noValuesError() {

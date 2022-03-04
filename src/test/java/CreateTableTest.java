@@ -125,4 +125,14 @@ public class CreateTableTest {
                                 createTableQuery.toString());
         }
 
+        // TODO test table with type but no definition
+
+        @Test
+        public void tableColumnWithTypeButNoDefinition() {
+                CreateTableQuery createTableQuery = Squiggle.CreateTable("table")
+                                .column("column1").varchar();
+                Exception thrown = assertThrows(NoColumnsException.class, () -> createTableQuery.toString());
+                assertTrue(thrown.getMessage().contains("Cannot create table without columns"));
+        }
+
 }

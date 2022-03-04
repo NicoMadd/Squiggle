@@ -68,7 +68,7 @@ public class CriteriaBuilder {
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.EQUALS, value));
     }
 
-    public CriteriaBuilder equals(float value) {
+    public CriteriaBuilder equals(Float value) {
         this.matchType = MatchCriteria.EQUALS;
         return this.addCriteria(new MatchCriteria(this.column, MatchCriteria.EQUALS, value));
     }
