@@ -6,8 +6,7 @@ public class Nullable extends Constraint {
 
     @Override
     public void write(Output out) {
-        out.print("NULL");
-
+        parser.nullable(out, this);
     }
 
 }

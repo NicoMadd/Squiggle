@@ -1,14 +1,23 @@
 package com.squiggle.parsers;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import com.squiggle.base.Column;
+import com.squiggle.base.ColumnDef;
 import com.squiggle.base.JoinCriteria;
 import com.squiggle.base.Row;
 import com.squiggle.base.Table;
+import com.squiggle.constraints.ForeignKey;
+import com.squiggle.constraints.NotNullable;
+import com.squiggle.constraints.Nullable;
+import com.squiggle.constraints.PrimaryKey;
+import com.squiggle.constraints.Unique;
 import com.squiggle.output.Output;
 import com.squiggle.output.Outputable;
 import com.squiggle.queries.CreateTableQuery;
@@ -238,9 +247,97 @@ public class SqlServerParser extends Parser {
 
         // Add columns definitions
 
+        List<ColumnDef> colsDefs = createTable.getColumnsDefs();
+        List<ColumnDef> primaryKeys = new LinkedList<>();
+
+        if (colsDefs.stream().filter(col -> col.isPrimaryKey()).count() > 1) {
+            for (ColumnDef colDef : colsDefs) {
+                if (colDef.isPrimaryKey()) {
+                    primaryKeys.add(colDef);
+                }
+            }
+        }
+
         out.print("(");
-        appendList(out, createTable.getColumnsDefs(), ",");
+
+        /*
+         * if any filtered column is primary key it filters it before and prints it now
+         * removing the primaryKey constraint, in order to print it at the end of the
+         * table definition
+         * 
+         */
+
+        if (primaryKeys.size() > 0) {
+
+            iterateOutputableCollection(out, colsDefs, (output, current, hasNext) -> {
+                ((ColumnDef) current).write(output, Arrays.asList(new Class[] { PrimaryKey.class }));
+                if (hasNext) {
+                    out.print(",");
+                    out.space();
+                }
+            });
+        } else {
+            appendList(out, colsDefs, ",");
+        }
+
+        /*
+         * prints primary key constraint
+         */
+
+        if (!primaryKeys.isEmpty()) {
+            out.print(",");
+            out.space();
+            out.print("PRIMARY KEY");
+            out.space();
+            out.print("(");
+
+            Iterator<ColumnDef> pks = primaryKeys.iterator();
+            while (pks.hasNext()) {
+                out.print(pks.next().getName());
+                if (pks.hasNext()) {
+                    out.print(",");
+                    out.space();
+                }
+            }
+
+            out.print(")");
+
+        }
+
         out.print(")");
+
+    }
+
+    @Override
+    public void foreignKey(Output out, ForeignKey foreignKey) {
+        out.print("FOREIGN KEY REFERENCES");
+        out.space();
+        out.print(foreignKey.getTableName());
+        out.print("(");
+        out.print(foreignKey.getForeignColumnName());
+        out.print(")");
+
+    }
+
+    @Override
+    public void notNullable(Output out, NotNullable notNullable) {
+        out.print("NOT NULL");
+    }
+
+    @Override
+    public void nullable(Output out, Nullable nullable) {
+        out.print("NULL");
+    }
+
+    @Override
+    public void primaryKey(Output out, PrimaryKey primaryKey) {
+        out.print("PRIMARY KEY");
+
+    }
+
+    @Override
+    public void unique(Output out, Unique unique) {
+        out.print("UNIQUE");
 
     }
 

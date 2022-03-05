@@ -91,6 +91,15 @@ public class CreateTableQuery extends Parserable implements Outputable, Validata
         return this.primaryKey();
     }
 
+    public CreateTableQuery foreignKey(String table, String foreignColumn) {
+        this.columnDefBuilder.foreignKey(table, foreignColumn);
+        return this;
+    }
+
+    public CreateTableQuery fk(String table, String foreignColumn) {
+        return this.foreignKey(table, foreignColumn);
+    }
+
     public CreateTableQuery define() {
         this.columnsDefs.add(this.columnDefBuilder.build());
         this.columnDefBuilder.reset();
