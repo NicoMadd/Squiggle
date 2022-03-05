@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.squiggle.base.ColumnDef;
 import com.squiggle.constraints.Constraint;
+import com.squiggle.constraints.ForeignKey;
 import com.squiggle.constraints.NotNullable;
 import com.squiggle.constraints.Nullable;
 import com.squiggle.constraints.PrimaryKey;
@@ -86,6 +87,11 @@ public class ColumnDefBuilder {
 
     public ColumnDefBuilder unique() {
         this.constraints.add(new Unique());
+        return this;
+    }
+
+    public ColumnDefBuilder foreignKey(String table, String foreignColumn) {
+        this.constraints.add(new ForeignKey(name, table, foreignColumn));
         return this;
     }
 

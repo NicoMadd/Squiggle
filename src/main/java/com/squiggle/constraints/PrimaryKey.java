@@ -6,7 +6,7 @@ public class PrimaryKey extends Constraint {
 
     @Override
     public void write(Output out) {
-        out.print("PRIMARY KEY");
+        parser.primaryKey(out, this);
     }
 
 }

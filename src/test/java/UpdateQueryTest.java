@@ -2,7 +2,6 @@
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Random;
 import java.util.SplittableRandom;
 
 import com.squiggle.Squiggle;
