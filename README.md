@@ -10,12 +10,35 @@ Im planning on giving maintenance to it, and developing it even further since I 
 
 ## What we have
 
-It's purpose actually was just to make SELECT queries, you can also make JOINs with other tables, condition columns with WHEREs and order them with GROUP BYs.
-The version I took is the 1.4.0. So... next release will be 1.5.0 to make differences with the original repo.
+Actually we are on v1.6.6. Squiggle can make
+
+- SELECT
+- INSERT
+- UPDATE
+- DELETE
+- CREATE TABLE
+- CREATE DATABASE
+- JOIN
+- WHERE
+- GROUP BY
+- ORDER BY
+- CONSTRAINTS
+- - PRIMARY KEY
+- - FOREIGN KEY
+- - AUTO INCREMENT
+- - NULLABLE
+- - NOT NULLABLE
+- - UNIQUE
+- - DEFAULT VALUE
+- FUNCTIONS
+- - SUM
+- - AVERAGE
+- - COUNT
 
 ## Looking Forward
 
-In the future, I hope it can be used to make INSERTs, UPDATEs, DELETEs and also be "intelligent" enough to optimize the query made.
+In the future, I hope to add other SQL Engines in order to be Oracle, PostgreSQL and MySQL compatible.
+Also handle T-SQL such as commits and transactions, views and more table definitions.
 
 ## Parsers
 
@@ -30,9 +53,10 @@ In the future, I hope it can be used to make INSERTs, UPDATEs, DELETEs and also 
 2. INSERT - [X]
 3. UPDATE - [X]
 4. DELETE - [X]
-5. GROUP BY - [ ]
+5. GROUP BY - [X]
 6. CREATE TABLE - [X]
-7. CREATE VIEW - [ ]
-8. CREATE COMMIT - [ ]
-9. CREATE TRANSACTION - [ ]
-10. TRIGGERS - [ ]
+7. CREATE DATABASE - [X]
+8. CREATE VIEW - [ ]
+9. CREATE COMMIT - [ ]
+10. CREATE TRANSACTION - [ ]
+11. TRIGGERS - [ ]
