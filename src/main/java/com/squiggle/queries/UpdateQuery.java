@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.squiggle.base.*;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.output.*;
+import com.squiggle.parsers.Parserable;
 import com.squiggle.types.values.DateTypeValue;
 import com.squiggle.types.values.DoubleTypeValue;
 import com.squiggle.types.values.FloatTypeValue;
@@ -122,7 +123,7 @@ public class UpdateQuery extends Query {
         return null;
     }
 
-    public Collection<Entry<? extends Outputable, ? extends Outputable>> getEntries() {
+    public Collection<Entry<? extends Parserable, ? extends Outputable>> getEntries() {
         return this.values.entrySet().stream().collect(Collectors.toList());
     }
 }

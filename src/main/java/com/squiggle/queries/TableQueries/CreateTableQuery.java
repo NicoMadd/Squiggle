@@ -1,5 +1,6 @@
-package com.squiggle.queries;
+package com.squiggle.queries.TableQueries;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,22 +8,20 @@ import com.squiggle.base.ColumnDef;
 import com.squiggle.base.Table;
 import com.squiggle.builders.ColumnDefBuilder;
 import com.squiggle.exceptions.NoColumnsException;
-import com.squiggle.interfaces.Validatable;
 import com.squiggle.output.Output;
-import com.squiggle.output.Outputable;
-import com.squiggle.output.ToStringer;
-import com.squiggle.parsers.Parserable;
-import com.squiggle.types.definitions.*;
+import com.squiggle.types.definitions.BooleanTypeDef;
+import com.squiggle.types.definitions.DateTypeDef;
+import com.squiggle.types.definitions.FloatTypeDef;
+import com.squiggle.types.definitions.IntTypeDef;
+import com.squiggle.types.definitions.VarcharTypeDef;
 
-public class CreateTableQuery extends Parserable implements Outputable, Validatable {
+public class CreateTableQuery extends TableQuery {
 
     private List<ColumnDef> columnsDefs;
     private ColumnDefBuilder columnDefBuilder;
-    private Table baseTable;
 
     public CreateTableQuery(String tableName) {
-        super();
-        this.baseTable = new Table(tableName);
+        super(tableName);
         this.columnsDefs = new LinkedList<ColumnDef>();
         this.columnDefBuilder = new ColumnDefBuilder();
     }
@@ -41,12 +40,8 @@ public class CreateTableQuery extends Parserable implements Outputable, Validata
         this.parser.createTableQuery(out, this);
     }
 
-    public String toString() {
-        validate();
-        return ToStringer.toString(this);
-    }
-
     public void validate() {
+        super.validate();
         if (this.columnsDefs.size() == 0) {
             throw new NoColumnsException("Cannot create table without columns");
         }
@@ -82,6 +77,11 @@ public class CreateTableQuery extends Parserable implements Outputable, Validata
         return this;
     }
 
+    public CreateTableQuery bool() {
+        this.columnDefBuilder.type(new BooleanTypeDef());
+        return this;
+    }
+
     public CreateTableQuery primaryKey() {
         this.columnDefBuilder.primaryKey();
         return this;
@@ -98,6 +98,11 @@ public class CreateTableQuery extends Parserable implements Outputable, Validata
 
     public CreateTableQuery fk(String table, String foreignColumn) {
         return this.foreignKey(table, foreignColumn);
+    }
+
+    public CreateTableQuery autoIncrement() {
+        this.columnDefBuilder.autoIncrement();
+        return this;
     }
 
     public CreateTableQuery define() {
@@ -118,6 +123,31 @@ public class CreateTableQuery extends Parserable implements Outputable, Validata
 
     public CreateTableQuery unique() {
         this.columnDefBuilder.unique();
+        return this;
+    }
+
+    public CreateTableQuery defaultValue(String value) {
+        this.columnDefBuilder.defaultValue(value);
+        return this;
+    }
+
+    public CreateTableQuery defaultValue(Integer value) {
+        this.columnDefBuilder.defaultValue(value);
+        return this;
+    }
+
+    public CreateTableQuery defaultValue(Double value) {
+        this.columnDefBuilder.defaultValue(value);
+        return this;
+    }
+
+    public CreateTableQuery defaultValue(Boolean value) {
+        this.columnDefBuilder.defaultValue(value);
+        return this;
+    }
+
+    public CreateTableQuery defaultValue(Date value) {
+        this.columnDefBuilder.defaultValue(value);
         return this;
     }
 

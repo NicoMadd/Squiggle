@@ -1,16 +1,23 @@
 package com.squiggle.parsers;
 
+import com.squiggle.base.AggregatedColumn;
+import com.squiggle.base.Column;
+import com.squiggle.constraints.AutoIncrement;
+import com.squiggle.constraints.DefaultValue;
 import com.squiggle.constraints.ForeignKey;
 import com.squiggle.constraints.NotNullable;
 import com.squiggle.constraints.Nullable;
 import com.squiggle.constraints.PrimaryKey;
 import com.squiggle.constraints.Unique;
 import com.squiggle.output.Output;
-import com.squiggle.queries.CreateTableQuery;
+import com.squiggle.queries.CreateDatabaseQuery;
 import com.squiggle.queries.DeleteQuery;
+import com.squiggle.queries.DropDatabaseQuery;
 import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
 import com.squiggle.queries.UpdateQuery;
+import com.squiggle.queries.TableQueries.CreateTableQuery;
+import com.squiggle.queries.TableQueries.DropTableQuery;
 
 public abstract class Parser {
 
@@ -37,5 +44,27 @@ public abstract class Parser {
     public abstract void primaryKey(Output out, PrimaryKey primaryKey);
 
     public abstract void unique(Output out, Unique unique);
+
+    public abstract void defaultValue(Output out, DefaultValue defaultValue);
+
+    public abstract void createDatabase(Output out, CreateDatabaseQuery createDatabaseQuery);
+
+    public abstract void dropDatabase(Output out, DropDatabaseQuery dropDatabaseQuery);
+
+    public abstract void autoIncrement(Output out, AutoIncrement autoIncrement);
+
+    public abstract void dropTableQuery(Output out, DropTableQuery dropTableQuery);
+
+    public abstract void simpleColumn(Output out, Column column);
+
+    public abstract void aggregatedColumn(Output out, AggregatedColumn aggregatedColumn);
+
+    public abstract void columnAlias(Output out, Column column);
+
+    public abstract void sum(Output out, AggregatedColumn aggregatedColumn);
+
+    public abstract void average(Output out, AggregatedColumn aggregatedColumn);
+
+    public abstract void count(Output out, AggregatedColumn aggregatedColumn);
 
 }

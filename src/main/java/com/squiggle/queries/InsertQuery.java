@@ -6,6 +6,7 @@ import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.output.*;
+import com.squiggle.types.values.BooleanTypeValue;
 import com.squiggle.types.values.DateTypeValue;
 import com.squiggle.types.values.DoubleTypeValue;
 import com.squiggle.types.values.FloatTypeValue;
@@ -89,6 +90,12 @@ public class InsertQuery extends Query {
 
     public InsertQuery value(Float flt) {
         row.addValue(new FloatTypeValue(flt));
+        updateRowStatus();
+        return this;
+    }
+
+    public InsertQuery value(Boolean bool) {
+        row.addValue(new BooleanTypeValue(bool));
         updateRowStatus();
         return this;
     }

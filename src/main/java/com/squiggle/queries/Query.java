@@ -3,14 +3,13 @@ package com.squiggle.queries;
 import java.util.*;
 
 import com.squiggle.base.*;
-import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.interfaces.Validatable;
 import com.squiggle.output.*;
 import com.squiggle.parsers.Parser;
 import com.squiggle.parsers.Parserable;
 
-public abstract class Query extends Parserable implements Outputable, Validatable {
+public abstract class Query extends Parserable implements Validatable {
 
     public static final int indentSize = 4;
 
