@@ -7,12 +7,13 @@ import java.util.Properties;
 import com.squiggle.Squiggle;
 import com.squiggle.queries.CreateDatabaseQuery;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import utils.DBProperties;
 import utils.SQLExecutor;
 
-// @Disabled
+@Disabled
 public class DBCreateDatabaseTest {
 
         Properties properties = DBProperties.getInstance();

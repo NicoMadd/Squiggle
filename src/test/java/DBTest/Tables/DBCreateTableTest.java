@@ -5,12 +5,13 @@ import java.util.Properties;
 import com.squiggle.Squiggle;
 import com.squiggle.queries.TableQueries.CreateTableQuery;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import utils.DBProperties;
 import utils.SQLExecutor;
 
-// @Disabled
+@Disabled
 public class DBCreateTableTest {
         Properties properties = DBProperties.getInstance();
         SQLExecutor sqlExecutor = new SQLExecutor(

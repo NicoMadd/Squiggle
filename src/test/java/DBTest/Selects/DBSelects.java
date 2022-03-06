@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import utils.DBProperties;
 import utils.SQLExecutor;
 
-// @Disabled
+@Disabled
 public class DBSelects {
 
         private final String tableName = "testTable";

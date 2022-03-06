@@ -6,12 +6,13 @@ import java.util.Properties;
 
 import com.squiggle.queries.DropDatabaseQuery;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import utils.DBProperties;
 import utils.SQLExecutor;
 
-// @Disabled
+@Disabled
 public class DBDropDatabaseTest {
 
         Properties properties = DBProperties.getInstance();
