@@ -23,17 +23,17 @@ Actually we are on v1.6.6. Squiggle can make
 - GROUP BY
 - ORDER BY
 - CONSTRAINTS
-- - PRIMARY KEY
-- - FOREIGN KEY
-- - AUTO INCREMENT
-- - NULLABLE
-- - NOT NULLABLE
-- - UNIQUE
-- - DEFAULT VALUE
+  - PRIMARY KEY
+  - FOREIGN KEY
+  - AUTO INCREMENT
+  - NULLABLE
+  - NOT NULLABLE
+  - UNIQUE
+  - DEFAULT VALUE
 - FUNCTIONS
-- - SUM
-- - AVERAGE
-- - COUNT
+  - SUM
+  - AVERAGE
+  - COUNT
 
 ## Looking Forward
 
