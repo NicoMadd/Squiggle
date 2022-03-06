@@ -1,3 +1,4 @@
+package QueryTests;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -88,6 +89,14 @@ public class InsertQueryTest {
                 InsertQuery insert = Squiggle.Insert().into("table").to("doubleCol").value(3.0);
                 assertEquals(
                                 "INSERT INTO table (doubleCol) VALUES (3.0)",
+                                insert.toString());
+        }
+
+        @Test
+        public void boolInsert() {
+                InsertQuery insert = Squiggle.Insert().into("table").to("boolCol").value(true);
+                assertEquals(
+                                "INSERT INTO table (boolCol) VALUES (1)",
                                 insert.toString());
         }
 

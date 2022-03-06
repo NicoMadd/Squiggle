@@ -1,8 +1,11 @@
+package QueryTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.squiggle.Squiggle;
-import com.squiggle.queries.CreateTableQuery;
+import com.squiggle.queries.TableQueries.CreateTableQuery;
 
 import org.junit.jupiter.api.Test;
 
@@ -94,4 +97,31 @@ public class CreateTableConstraintTest {
                 assertEquals("CREATE TABLE table (column1 varchar(255) FOREIGN KEY REFERENCES table2(foreignColumn))",
                                 createTableQuery.toString());
         }
+
+        @Test
+        public void defineNullableWhenNotNullable() {
+                CreateTableQuery createTableQuery = Squiggle.CreateTable("table")
+                                .column("column1").varchar().notNullable();
+                Exception thrown = assertThrows(IllegalStateException.class, () -> createTableQuery.nullable());
+                assertTrue(thrown.getMessage().equals("Column already has a not nullable constraint"));
+
+        }
+
+        @Test
+        public void defineNotNullableWhenNullable() {
+                CreateTableQuery createTableQuery = Squiggle.CreateTable("table")
+                                .column("column1").varchar().nullable();
+                Exception thrown = assertThrows(IllegalStateException.class, () -> createTableQuery.notNullable());
+                assertTrue(thrown.getMessage().equals("Column already has a nullable constraint"));
+
+        }
+
+        @Test
+        public void defineDefaultValue() {
+                CreateTableQuery createTableQuery = Squiggle.CreateTable("table")
+                                .column("column1").varchar().defaultValue("defaultValue").define();
+                assertEquals("CREATE TABLE table (column1 varchar(255) DEFAULT 'defaultValue')",
+                                createTableQuery.toString());
+        }
+
 }
