@@ -1,3 +1,4 @@
+package QueryTests;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,6 +64,20 @@ public class SelectQueryTest {
                 .select("column2");
         assertEquals(
                 "SELECT table1.column1, table2.column2 FROM table1 JOIN table2 ON table1.column1 = table2.column2",
+                select.toString());
+    }
+
+    @Test
+    public void simpleSelectColumnAs() {
+        SelectQuery select = Squiggle.Select().from("table").select("column", "alias");
+        assertEquals("SELECT table.column AS alias FROM table", select.toString());
+    }
+
+    @Test
+    public void complexSelectColumnAs() {
+        SelectQuery select = Squiggle.Select().from("table").select("column", "alias").select("column2", "alias2")
+                .select("column3", "alias3");
+        assertEquals("SELECT table.column AS alias, table.column2 AS alias2, table.column3 AS alias3 FROM table",
                 select.toString());
     }
 

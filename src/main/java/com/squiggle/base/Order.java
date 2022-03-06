@@ -1,15 +1,16 @@
 package com.squiggle.base;
 
 import com.squiggle.output.Output;
-import com.squiggle.output.Outputable;
 import com.squiggle.output.ToStringer;
+import com.squiggle.parsers.Parserable;
 
 /**
  * ORDER BY clause. See SelectQuery.addOrder(Order).
  * 
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
+ * @author <a href="https://github.com/NicoMadd">Nicolas Madeo</a>
  */
-public class Order implements Outputable {
+public class Order extends Parserable {
 
     public static final boolean ASCENDING = true;
     public static final boolean DESCENDING = false;

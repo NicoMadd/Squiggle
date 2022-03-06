@@ -6,25 +6,33 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
+import com.squiggle.base.AggregatedColumn;
 import com.squiggle.base.Column;
 import com.squiggle.base.ColumnDef;
 import com.squiggle.base.JoinCriteria;
 import com.squiggle.base.Row;
 import com.squiggle.base.Table;
+import com.squiggle.constraints.AutoIncrement;
+import com.squiggle.constraints.DefaultValue;
 import com.squiggle.constraints.ForeignKey;
 import com.squiggle.constraints.NotNullable;
 import com.squiggle.constraints.Nullable;
 import com.squiggle.constraints.PrimaryKey;
 import com.squiggle.constraints.Unique;
+import com.squiggle.functions.Average;
+import com.squiggle.functions.Count;
+import com.squiggle.functions.Sum;
 import com.squiggle.output.Output;
 import com.squiggle.output.Outputable;
-import com.squiggle.queries.CreateTableQuery;
+import com.squiggle.queries.CreateDatabaseQuery;
 import com.squiggle.queries.DeleteQuery;
+import com.squiggle.queries.DropDatabaseQuery;
 import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
 import com.squiggle.queries.UpdateQuery;
+import com.squiggle.queries.TableQueries.CreateTableQuery;
+import com.squiggle.queries.TableQueries.DropTableQuery;
 import com.squiggle.types.values.TypeValue;
 import com.squiggle.utils.TriConsumer;
 
@@ -37,19 +45,19 @@ public class SqlServerParser extends Parser {
      * Iterate through a Set and execute a function on each
      * entry.
      */
-    private void iterateEntryCollection(Output out, Collection<Entry<? extends Outputable, ? extends Outputable>> set,
-            TriConsumer<Output, Entry<? extends Outputable, ? extends Outputable>, Boolean> consumer) {
-        for (Iterator<Entry<? extends Outputable, ? extends Outputable>> i = set.iterator(); i.hasNext();)
+    private void iterateEntryCollection(Output out, Collection<Entry<? extends Parserable, ? extends Outputable>> set,
+            TriConsumer<Output, Entry<? extends Parserable, ? extends Outputable>, Boolean> consumer) {
+        for (Iterator<Entry<? extends Parserable, ? extends Outputable>> i = set.iterator(); i.hasNext();)
             consumer.accept(out, i.next(), i.hasNext());
     }
 
     /**
-     * Iterate through an Outputable Collection and execute a function on each
+     * Iterate through a Parserable Collection and execute a function on each
      * entry.
      */
-    private void iterateOutputableCollection(Output out, Collection<? extends Outputable> outputables,
-            TriConsumer<Output, ? super Outputable, Boolean> consumer) {
-        for (Iterator<? extends Outputable> i = outputables.iterator(); i.hasNext();)
+    private void iterateParserableCollection(Output out, Collection<? extends Parserable> parserables,
+            TriConsumer<Output, ? super Parserable, Boolean> consumer) {
+        for (Iterator<? extends Parserable> i = parserables.iterator(); i.hasNext();)
             consumer.accept(out, i.next(), i.hasNext());
     }
 
@@ -57,8 +65,8 @@ public class SqlServerParser extends Parser {
      * Iterate through a Collection and append all entries (using .toString()) to a
      * StringBuffer.
      */
-    private void appendList(Output out, Collection<? extends Outputable> outputables, String separator) {
-        this.iterateOutputableCollection(out, outputables, (output, current, hasNext) -> {
+    private void appendList(Output out, Collection<? extends Parserable> parserables, String separator) {
+        this.iterateParserableCollection(out, parserables, (output, current, hasNext) -> {
             current.write(out);
             if (hasNext) {
                 out.print(separator);
@@ -94,7 +102,16 @@ public class SqlServerParser extends Parser {
             out.space();
 
             appendList(out, selectQuery.listCriteria(), "AND");
+        }
 
+        // Add group by
+
+        if (selectQuery.listGroupBys().size() > 0) {
+            out.space();
+            out.print("GROUP BY");
+            out.space();
+
+            appendList(out, selectQuery.listGroupBys(), ",");
         }
 
         // Add order
@@ -110,7 +127,7 @@ public class SqlServerParser extends Parser {
 
     private void addFroms(Output out, List<Table> usedTables, List<JoinCriteria> joins) {
 
-        iterateOutputableCollection(out, joins, (output, currentJoin, hasNext) -> {
+        iterateParserableCollection(out, joins, (output, currentJoin, hasNext) -> {
             out.print(currentJoin);
             JoinCriteria join = (JoinCriteria) currentJoin;
             // if table in usedTables, remove it
@@ -122,7 +139,7 @@ public class SqlServerParser extends Parser {
         // iterate through all tables used in query and add them to the FROM clause and
         // dont add , if its the last one
 
-        iterateOutputableCollection(out, usedTables, (output, currentTable, hasNext) -> {
+        iterateParserableCollection(out, usedTables, (output, currentTable, hasNext) -> {
             currentTable.write(out);
             if (hasNext) {
                 out.print(",");
@@ -170,14 +187,15 @@ public class SqlServerParser extends Parser {
 
         out.print("VALUES ");
         List<Row> rows = insertQuery.getRows();
-        Integer length = rows.size();
-        Integer i = 0;
 
-        for (Row row : rows) {
+        Iterator<Row> rowsIterator = rows.iterator();
+
+        while (rowsIterator.hasNext()) {
+            Row row = rowsIterator.next();
             out.print("(");
             appendObjectList(out, row.getValues(), ",");
             out.print(")");
-            if (length != ++i)
+            if (rowsIterator.hasNext())
                 out.print(", ");
         }
 
@@ -269,7 +287,7 @@ public class SqlServerParser extends Parser {
 
         if (primaryKeys.size() > 0) {
 
-            iterateOutputableCollection(out, colsDefs, (output, current, hasNext) -> {
+            iterateParserableCollection(out, colsDefs, (output, current, hasNext) -> {
                 ((ColumnDef) current).write(output, Arrays.asList(new Class[] { PrimaryKey.class }));
                 if (hasNext) {
                     out.print(",");
@@ -338,6 +356,109 @@ public class SqlServerParser extends Parser {
     @Override
     public void unique(Output out, Unique unique) {
         out.print("UNIQUE");
+
+    }
+
+    @Override
+    public void defaultValue(Output out, DefaultValue defaultValue) {
+        out.print("DEFAULT");
+        out.space();
+        defaultValue.getValue().write(out);
+
+    }
+
+    @Override
+    public void createDatabase(Output out, CreateDatabaseQuery createDatabaseQuery) {
+        out.print("CREATE DATABASE");
+        out.space();
+        out.print(createDatabaseQuery.getDatabaseName());
+
+    }
+
+    @Override
+    public void dropDatabase(Output out, DropDatabaseQuery dropDatabaseQuery) {
+        out.print("DROP DATABASE");
+        out.space();
+        out.print(dropDatabaseQuery.getDatabaseName());
+
+    }
+
+    @Override
+    public void autoIncrement(Output out, AutoIncrement autoIncrement) {
+        out.print("IDENTITY");
+        out.print("(");
+        out.print(autoIncrement.getStart());
+        out.print(",");
+        out.print(autoIncrement.getIncrement());
+        out.print(")");
+
+    }
+
+    @Override
+    public void dropTableQuery(Output out, DropTableQuery dropTableQuery) {
+        out.print("DROP TABLE");
+        out.space();
+        out.print(dropTableQuery.getTable().getName());
+
+    }
+
+    @Override
+    public void simpleColumn(Output out, Column column) {
+        if (column.getWriteWithTable())
+            out.print(column.getTable().getAlias()).print('.');
+        out.print(column.getName());
+        columnAlias(out, column);
+    }
+
+    @Override
+    public void columnAlias(Output out, Column column) {
+        if (column.getAlias() != null) {
+            out.print(" AS ");
+            out.print(column.getAlias());
+        }
+    }
+
+    @Override
+    public void sum(Output out, AggregatedColumn aggregatedColumn) {
+
+        System.out.println(aggregatedColumn.getAlias());
+        out.print("SUM");
+        out.print("(");
+        if (aggregatedColumn.getWriteWithTable())
+            out.print(aggregatedColumn.getTable().getAlias()).print('.');
+        out.print(aggregatedColumn.getName());
+        out.print(")");
+        columnAlias(out, aggregatedColumn);
+
+    }
+
+    @Override
+    public void average(Output out, AggregatedColumn aggregatedColumn) {
+        out.print("AVG");
+        out.print("(");
+        if (aggregatedColumn.getWriteWithTable())
+            out.print(aggregatedColumn.getTable().getAlias()).print('.');
+        out.print(aggregatedColumn.getName());
+        out.print(")");
+        columnAlias(out, aggregatedColumn);
+
+    }
+
+    @Override
+    public void count(Output out, AggregatedColumn aggregatedColumn) {
+        out.print("COUNT");
+        out.print("(");
+        if (aggregatedColumn.getWriteWithTable())
+            out.print(aggregatedColumn.getTable().getAlias()).print('.');
+        out.print(aggregatedColumn.getName());
+        out.print(")");
+        columnAlias(out, aggregatedColumn);
+
+    }
+
+    @Override
+    public void aggregatedColumn(Output out, AggregatedColumn aggregatedColumn) {
+        aggregatedColumn.getFunction().write(out, aggregatedColumn);
 
     }
 

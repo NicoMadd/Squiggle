@@ -7,5 +7,5 @@ package com.squiggle.output;
  * @author <a href="mailto:joe@truemesh.com">Joe Walnes</a>
  */
 public interface Outputable {
-    void write(Output out);
+    public void write(Output out);
 }

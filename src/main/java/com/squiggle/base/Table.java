@@ -1,13 +1,15 @@
 package com.squiggle.base;
 
+import com.squiggle.functions.SQLFunction;
 import com.squiggle.output.Output;
-import com.squiggle.output.Outputable;
 import com.squiggle.output.ToStringer;
+import com.squiggle.parsers.Parserable;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
+ * @author <a href="https://github.com/NicoMadd">Nicolas Madeo</a>
  */
-public class Table implements Outputable {
+public class Table extends Parserable {
 
     private String name;
     private String alias;
@@ -50,6 +52,18 @@ public class Table implements Outputable {
         return new Column(this, columnName);
     }
 
+    public Column getColumn(String columnName, String alias) {
+        return new Column(this, columnName, alias);
+    }
+
+    public Column getAggregatedColumn(String columname, SQLFunction function) {
+        return new AggregatedColumn(this, columname, function);
+    }
+
+    public Column getAggregatedColumn(String columname, String alias, SQLFunction function) {
+        return new AggregatedColumn(this, columname, alias, function);
+    }
+
     public boolean equals(Object o) {
         if (o == null)
             return false;
@@ -69,4 +83,5 @@ public class Table implements Outputable {
     public String toString() {
         return ToStringer.toString(this);
     }
+
 }

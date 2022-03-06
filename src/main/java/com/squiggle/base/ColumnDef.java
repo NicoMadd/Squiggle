@@ -5,10 +5,10 @@ import java.util.List;
 import com.squiggle.constraints.Constraint;
 import com.squiggle.constraints.PrimaryKey;
 import com.squiggle.output.Output;
-import com.squiggle.output.Outputable;
+import com.squiggle.parsers.Parserable;
 import com.squiggle.types.definitions.TypeDef;
 
-public class ColumnDef implements Outputable {
+public class ColumnDef extends Parserable {
 
     private TypeDef type;
     private String name;

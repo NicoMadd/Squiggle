@@ -3,6 +3,8 @@ package com.squiggle;
 import com.squiggle.parsers.Parser;
 import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.*;
+import com.squiggle.queries.TableQueries.CreateTableQuery;
+import com.squiggle.queries.TableQueries.DropTableQuery;
 
 public class Squiggle {
 
@@ -28,6 +30,18 @@ public class Squiggle {
         return new CreateTableQuery(tableName);
     }
 
+    public static DropTableQuery DropTable(String tableName) {
+        return new DropTableQuery(tableName);
+    }
+
+    public static CreateDatabaseQuery CreateDatabase(String databaseName) {
+        return new CreateDatabaseQuery(databaseName);
+    }
+
+    public static DropDatabaseQuery DropDatabase(String databaseName) {
+        return new DropDatabaseQuery(databaseName);
+    }
+
     public static void setParser(Parser parser) {
         Squiggle.parser = parser;
     }
@@ -35,4 +49,5 @@ public class Squiggle {
     public static Parser getParser() {
         return Squiggle.parser;
     }
+
 }

@@ -1,12 +1,17 @@
 package com.squiggle.queries;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 import com.squiggle.base.*;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
+import com.squiggle.functions.Average;
+import com.squiggle.functions.Count;
+import com.squiggle.functions.Sum;
 import com.squiggle.output.*;
+import com.squiggle.parsers.Parserable;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
@@ -17,11 +22,13 @@ public class SelectQuery extends Query {
     protected boolean isDistinct = false;
     protected Set<Order> order;
     protected List<JoinCriteria> joins;
+    protected List<Column> groupBys;
 
     public SelectQuery() {
         super();
         this.order = new HashSet<>();
         this.joins = new LinkedList<>();
+        this.groupBys = new LinkedList<>();
 
     }
 
@@ -52,6 +59,47 @@ public class SelectQuery extends Query {
     public SelectQuery select(String columnName) {
         validate();
         return this.select(this.baseTable.getColumn(columnName));
+    }
+
+    public SelectQuery select(String columnName, String alias) {
+        validate();
+        return this.select(this.baseTable.getColumn(columnName, alias));
+
+    }
+
+    public SelectQuery sum(String columName) {
+        return this.select(this.baseTable.getAggregatedColumn(columName, new Sum()));
+    }
+
+    public SelectQuery avg(String columName) {
+        return this.average(columName);
+
+    }
+
+    public SelectQuery average(String columName) {
+        return this.select(this.baseTable.getAggregatedColumn(columName, new Average()));
+
+    }
+
+    public SelectQuery count(String columName) {
+        return this.select(this.baseTable.getAggregatedColumn(columName, new Count()));
+    }
+
+    public SelectQuery sum(String columName, String alias) {
+        return this.select(this.baseTable.getAggregatedColumn(columName, alias, new Sum()));
+    }
+
+    public SelectQuery avg(String columName, String alias) {
+        return this.average(columName, alias);
+    }
+
+    public SelectQuery average(String columName, String alias) {
+        return this.select(this.baseTable.getAggregatedColumn(columName, alias, new Average()));
+
+    }
+
+    public SelectQuery count(String columName, String alias) {
+        return this.select(this.baseTable.getAggregatedColumn(columName, alias, new Count()));
     }
 
     public void validate() {
@@ -125,6 +173,22 @@ public class SelectQuery extends Query {
                 .from(dstTable);
     }
 
+    public SelectQuery groupBy(Column column) {
+        groupBys.add(column);
+        return this;
+    }
+
+    public SelectQuery groupBy(String columnName) {
+        validate();
+        return this.groupBy(this.baseTable.getColumn(columnName));
+    }
+
+    public SelectQuery groupBy(String columnName, String alias) {
+        validate();
+        return this.groupBy(this.baseTable.getColumn(columnName, alias));
+
+    }
+
     public SelectQuery order(Order order) {
         this.order.add(order);
         return this;
@@ -156,6 +220,10 @@ public class SelectQuery extends Query {
 
     public Set<Order> listOrder() {
         return order;
+    }
+
+    public List<Column> listGroupBys() {
+        return groupBys;
     }
 
     public void write(Output out) {

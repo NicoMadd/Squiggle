@@ -1,3 +1,4 @@
+package QueryTests;
 
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -6,9 +7,7 @@ import java.util.Date;
 
 import com.squiggle.Squiggle;
 import com.squiggle.base.MatchCriteria;
-import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
-import com.squiggle.exceptions.NoWhereClauseException;
 import com.squiggle.queries.DeleteQuery;
 
 public class DeleteQueryTest {

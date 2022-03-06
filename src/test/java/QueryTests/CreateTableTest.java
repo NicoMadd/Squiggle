@@ -1,3 +1,4 @@
+package QueryTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -7,7 +8,7 @@ import java.util.SplittableRandom;
 
 import com.squiggle.Squiggle;
 import com.squiggle.exceptions.NoColumnsException;
-import com.squiggle.queries.CreateTableQuery;
+import com.squiggle.queries.TableQueries.CreateTableQuery;
 
 import org.junit.jupiter.api.Test;
 
@@ -133,6 +134,24 @@ public class CreateTableTest {
                                 .column("column1").varchar();
                 Exception thrown = assertThrows(NoColumnsException.class, () -> createTableQuery.toString());
                 assertTrue(thrown.getMessage().contains("Cannot create table without columns"));
+        }
+
+        @Test
+        public void defineBoolColumn() {
+                CreateTableQuery createTableQuery = Squiggle.CreateTable("table").column("column1").bool().define();
+                assertEquals(
+                                "CREATE TABLE table (column1 BIT)",
+                                createTableQuery.toString());
+        }
+
+        @Test
+        public void defineNBoolColumns() {
+                CreateTableQuery createTableQuery = Squiggle.CreateTable("table").column("column1").bool().define()
+                                .column("column2").bool().define()
+                                .column("column3").bool().define();
+                assertEquals(
+                                "CREATE TABLE table (column1 BIT, column2 BIT, column3 BIT)",
+                                createTableQuery.toString());
         }
 
 }
