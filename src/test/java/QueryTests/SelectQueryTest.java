@@ -81,4 +81,22 @@ public class SelectQueryTest {
                 select.toString());
     }
 
+    @Test
+    public void simpleStringWhere() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").where("column", c -> c.equals("value"));
+        assertEquals("SELECT table.* FROM table WHERE table.column = 'value'", select.toString());
+    }
+
+    @Test
+    public void simpleIntWhere() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").where("column", c -> c.equals(1));
+        assertEquals("SELECT table.* FROM table WHERE table.column = 1", select.toString());
+    }
+
+    @Test
+    public void multiWhereColumn() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").where("column1", c -> c.equals(1))
+                .where("column2", c -> c.equals(2));
+        assertEquals("SELECT table.* FROM table WHERE table.column1 = 1 AND table.column2 = 2", select.toString());
+    }
 }

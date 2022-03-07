@@ -101,7 +101,7 @@ public class SqlServerParser extends Parser {
             out.print("WHERE");
             out.space();
 
-            appendList(out, selectQuery.listCriteria(), "AND");
+            appendList(out, selectQuery.listCriteria(), " AND");
         }
 
         // Add group by
