@@ -9,12 +9,10 @@ public abstract class Constraint implements Outputable {
     protected Parser parser;
 
     public Constraint(Parser parser) {
-        super();
         this.parser = parser;
     }
 
     public Constraint() {
-        super();
         this.parser = Squiggle.getParser();
     }
 

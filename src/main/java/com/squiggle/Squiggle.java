@@ -42,6 +42,10 @@ public class Squiggle {
         return new DropDatabaseQuery(databaseName);
     }
 
+    public static TransactionQuery Transaction() {
+        return new TransactionQuery();
+    }
+
     public static void setParser(Parser parser) {
         Squiggle.parser = parser;
     }
