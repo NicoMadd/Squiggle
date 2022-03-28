@@ -100,4 +100,12 @@ public class InsertQueryTest {
                                 insert.toString());
         }
 
+        @Test
+        public void insertWithColumnWithSpaces() {
+                InsertQuery insert = Squiggle.Insert().into("table").to("column with spaces").value("value1");
+                assertEquals(
+                                "INSERT INTO table (\"column with spaces\") VALUES ('value1')",
+                                insert.toString());
+        }
+
 }

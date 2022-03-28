@@ -3,3 +3,4 @@
 /.vscode
 .classpath
 .project
+src/test/java/resources/database.properties

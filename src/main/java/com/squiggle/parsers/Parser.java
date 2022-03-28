@@ -2,6 +2,9 @@ package com.squiggle.parsers;
 
 import com.squiggle.base.AggregatedColumn;
 import com.squiggle.base.Column;
+import com.squiggle.base.Table;
+import com.squiggle.base.Transactables.Commit;
+import com.squiggle.base.Transactables.Rollback;
 import com.squiggle.constraints.AutoIncrement;
 import com.squiggle.constraints.DefaultValue;
 import com.squiggle.constraints.ForeignKey;
@@ -15,6 +18,7 @@ import com.squiggle.queries.DeleteQuery;
 import com.squiggle.queries.DropDatabaseQuery;
 import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
+import com.squiggle.queries.TransactionQuery;
 import com.squiggle.queries.UpdateQuery;
 import com.squiggle.queries.TableQueries.CreateTableQuery;
 import com.squiggle.queries.TableQueries.DropTableQuery;
@@ -66,5 +70,13 @@ public abstract class Parser {
     public abstract void average(Output out, AggregatedColumn aggregatedColumn);
 
     public abstract void count(Output out, AggregatedColumn aggregatedColumn);
+
+    public abstract void commit(Output out, Commit commit);
+
+    public abstract void rollback(Output out, Rollback rollback);
+
+    public abstract void transaction(Output out, TransactionQuery transactionQuery);
+
+    public abstract void table(Output out, Table table);
 
 }

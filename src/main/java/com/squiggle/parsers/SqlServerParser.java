@@ -13,6 +13,9 @@ import com.squiggle.base.ColumnDef;
 import com.squiggle.base.JoinCriteria;
 import com.squiggle.base.Row;
 import com.squiggle.base.Table;
+import com.squiggle.base.Transactables.Commit;
+import com.squiggle.base.Transactables.Rollback;
+import com.squiggle.base.Transactables.Transactable;
 import com.squiggle.constraints.AutoIncrement;
 import com.squiggle.constraints.DefaultValue;
 import com.squiggle.constraints.ForeignKey;
@@ -20,9 +23,6 @@ import com.squiggle.constraints.NotNullable;
 import com.squiggle.constraints.Nullable;
 import com.squiggle.constraints.PrimaryKey;
 import com.squiggle.constraints.Unique;
-import com.squiggle.functions.Average;
-import com.squiggle.functions.Count;
-import com.squiggle.functions.Sum;
 import com.squiggle.output.Output;
 import com.squiggle.output.Outputable;
 import com.squiggle.queries.CreateDatabaseQuery;
@@ -30,6 +30,7 @@ import com.squiggle.queries.DeleteQuery;
 import com.squiggle.queries.DropDatabaseQuery;
 import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
+import com.squiggle.queries.TransactionQuery;
 import com.squiggle.queries.UpdateQuery;
 import com.squiggle.queries.TableQueries.CreateTableQuery;
 import com.squiggle.queries.TableQueries.DropTableQuery;
@@ -101,7 +102,7 @@ public class SqlServerParser extends Parser {
             out.print("WHERE");
             out.space();
 
-            appendList(out, selectQuery.listCriteria(), "AND");
+            appendList(out, selectQuery.listCriteria(), " AND");
         }
 
         // Add group by
@@ -404,9 +405,18 @@ public class SqlServerParser extends Parser {
 
     @Override
     public void simpleColumn(Output out, Column column) {
+
+        String name = column.getName();
         if (column.getWriteWithTable())
             out.print(column.getTable().getAlias()).print('.');
-        out.print(column.getName());
+
+        if (name.contains(" ")) {
+            out.print("\"");
+            out.print(name);
+            out.print("\"");
+        } else {
+            out.print(name);
+        }
         columnAlias(out, column);
     }
 
@@ -459,6 +469,63 @@ public class SqlServerParser extends Parser {
     @Override
     public void aggregatedColumn(Output out, AggregatedColumn aggregatedColumn) {
         aggregatedColumn.getFunction().write(out, aggregatedColumn);
+
+    }
+
+    @Override
+    public void commit(Output out, Commit commit) {
+        out.print("COMMIT TRANSACTION");
+        out.space();
+
+    }
+
+    @Override
+    public void rollback(Output out, Rollback rollback) {
+        out.print("ROLLBACK TRANSACTION");
+        out.space();
+
+    }
+
+    @Override
+    public void transaction(Output out, TransactionQuery transactionQuery) {
+        out.print("BEGIN TRANSACTION");
+        out.space();
+
+        // print all transactables
+        /*
+         * Idea is to print all transactables in the same order as they were added to
+         * the transaction
+         * example
+         * BEGIN TRANSACTION
+         * INSERT INTO table1 (col1, col2) VALUES (1, 2)
+         * INSERT INTO table2 (col1, col2) VALUES (1, 2)
+         * COMMIT TRANSACTION
+         * 
+         */
+        List<Transactable> tsx = transactionQuery.getTransactables();
+        for (Transactable t : tsx) {
+            t.write(out);
+            out.space();
+        }
+
+    }
+
+    @Override
+    public void table(Output out, Table table) {
+
+        String name = table.getName();
+
+        if (name.contains(" ")) {
+            out.print("\"");
+            out.print(name);
+            out.print("\"");
+        } else {
+            out.print(name);
+        }
+        if (table.hasAlias()) {
+            out.print(' ');
+            out.print(table.getAlias());
+        }
 
     }
 

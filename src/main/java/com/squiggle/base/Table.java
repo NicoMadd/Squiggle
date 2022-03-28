@@ -34,7 +34,7 @@ public class Table extends Parserable {
     /**
      * Whether this table has an alias assigned.
      */
-    private boolean hasAlias() {
+    public boolean hasAlias() {
         return alias != null;
     }
 
@@ -73,11 +73,7 @@ public class Table extends Parserable {
     }
 
     public void write(Output out) {
-        out.print(getName());
-        if (hasAlias()) {
-            out.print(' ');
-            out.print(getAlias());
-        }
+        this.parser.table(out, this);
     }
 
     public String toString() {

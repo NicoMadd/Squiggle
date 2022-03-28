@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.squiggle.base.*;
+import com.squiggle.builders.CriteriaBuilder;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.output.*;
 import com.squiggle.parsers.Parserable;

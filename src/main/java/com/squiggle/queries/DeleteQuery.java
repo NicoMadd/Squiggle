@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import com.squiggle.base.*;
+import com.squiggle.builders.CriteriaBuilder;
 import com.squiggle.output.*;
 
 /**

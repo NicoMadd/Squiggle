@@ -1,17 +1,26 @@
 package com.squiggle.queries;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
-import com.squiggle.base.*;
+import com.squiggle.base.Column;
+import com.squiggle.base.Criteria;
+import com.squiggle.base.JoinCriteria;
+import com.squiggle.base.NoCriteria;
+import com.squiggle.base.Order;
+import com.squiggle.base.Table;
+import com.squiggle.builders.CriteriaBuilder;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.functions.Average;
 import com.squiggle.functions.Count;
 import com.squiggle.functions.Sum;
-import com.squiggle.output.*;
-import com.squiggle.parsers.Parserable;
+import com.squiggle.output.Output;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
