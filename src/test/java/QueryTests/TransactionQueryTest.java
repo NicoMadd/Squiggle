@@ -9,10 +9,12 @@ import org.junit.jupiter.api.Test;
 
 public class TransactionQueryTest {
 
+    // TODO ADD TEST COMMITTED AND ROLLBACK IN THE SAME.
+    // TODO ADD NAMED TRANSACTIONS TO ROLLBACK IF CONDITION.
     @Test
     public void simpleEmptyTransaction() {
         TransactionQuery tsQuery = Squiggle.Transaction().commit();
-        assertEquals("BEGIN TRANSACTION", tsQuery.toString());
+        assertEquals("BEGIN TRANSACTION COMMIT TRANSACTION", tsQuery.toString());
     }
 
     @Test
