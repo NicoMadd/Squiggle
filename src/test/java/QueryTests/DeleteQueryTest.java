@@ -58,4 +58,11 @@ public class DeleteQueryTest {
                 delete.toString());
     }
 
+    @Test
+    public void deleteWithColumnWithSpaces() {
+        DeleteQuery delete = Squiggle.Delete().from("table").where("column with spaces",
+                column -> column.equals("value"));
+        assertEquals("DELETE FROM table WHERE table.\"column with spaces\" = 'value'", delete.toString());
+    }
+
 }

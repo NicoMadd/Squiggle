@@ -9,8 +9,6 @@ import com.squiggle.queries.DropDatabaseQuery;
 
 import org.junit.jupiter.api.Test;
 
-//TODO split this into multiple tests
-
 public class DropDatabaseTest {
 
         @Test

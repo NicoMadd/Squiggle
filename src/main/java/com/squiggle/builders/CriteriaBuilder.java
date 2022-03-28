@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.squiggle.base;
+package com.squiggle.builders;
 
 import java.util.Date;
+
+import com.squiggle.base.*;
 
 /**
  *

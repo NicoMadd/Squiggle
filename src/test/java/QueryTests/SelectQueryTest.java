@@ -99,4 +99,10 @@ public class SelectQueryTest {
                 .where("column2", c -> c.equals(2));
         assertEquals("SELECT table.* FROM table WHERE table.column1 = 1 AND table.column2 = 2", select.toString());
     }
+
+    @Test
+    public void selectWithColumnWithSpaces() {
+        SelectQuery select = Squiggle.Select().from("table").select("Column 1", "alias");
+        assertEquals("SELECT table.\"Column 1\" AS alias FROM table", select.toString());
+    }
 }

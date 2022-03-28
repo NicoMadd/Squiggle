@@ -64,4 +64,10 @@ public class UpdateQueryTest {
                 + value2 + ", table.column4=" + value3 + " WHERE table.whereColumn = " + value4, update.toString());
     }
 
+    @Test
+    public void updateWithColumnWithSpaces() {
+        UpdateQuery update = Squiggle.Update().table("table").set("column with spaces").to("value");
+        assertEquals("UPDATE table SET table.\"column with spaces\"='value'", update.toString());
+    }
+
 }

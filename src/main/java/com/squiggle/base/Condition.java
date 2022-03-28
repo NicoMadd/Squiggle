@@ -5,6 +5,8 @@
  */
 package com.squiggle.base;
 
+import com.squiggle.builders.CriteriaBuilder;
+
 /**
  *
  * @author nmadeo
