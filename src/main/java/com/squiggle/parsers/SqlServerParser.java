@@ -31,6 +31,7 @@ import com.squiggle.queries.DropDatabaseQuery;
 import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
 import com.squiggle.queries.TransactionQuery;
+import com.squiggle.queries.TryCatchQuery;
 import com.squiggle.queries.UpdateQuery;
 import com.squiggle.queries.TableQueries.CreateTableQuery;
 import com.squiggle.queries.TableQueries.DropTableQuery;
@@ -526,6 +527,13 @@ public class SqlServerParser extends Parser {
             out.print(' ');
             out.print(table.getAlias());
         }
+
+    }
+
+    @Override
+    public void tryCatch(Output out, TryCatchQuery tryCatchQuery) {
+
+        
 
     }
 

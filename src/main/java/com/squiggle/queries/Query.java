@@ -4,13 +4,14 @@ import java.util.*;
 
 import com.squiggle.base.*;
 import com.squiggle.base.Transactables.Transactable;
+import com.squiggle.base.Tryables.Tryable;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.interfaces.Validatable;
 import com.squiggle.output.*;
 import com.squiggle.parsers.Parser;
 import com.squiggle.parsers.Parserable;
 
-public abstract class Query extends Parserable implements Validatable, Transactable {
+public abstract class Query extends Parserable implements Validatable, Transactable,Tryable {
 
     public static final int indentSize = 4;
 

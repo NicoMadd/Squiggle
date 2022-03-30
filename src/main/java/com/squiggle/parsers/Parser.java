@@ -19,6 +19,7 @@ import com.squiggle.queries.DropDatabaseQuery;
 import com.squiggle.queries.InsertQuery;
 import com.squiggle.queries.SelectQuery;
 import com.squiggle.queries.TransactionQuery;
+import com.squiggle.queries.TryCatchQuery;
 import com.squiggle.queries.UpdateQuery;
 import com.squiggle.queries.TableQueries.CreateTableQuery;
 import com.squiggle.queries.TableQueries.DropTableQuery;
@@ -78,5 +79,7 @@ public abstract class Parser {
     public abstract void transaction(Output out, TransactionQuery transactionQuery);
 
     public abstract void table(Output out, Table table);
+
+    public abstract void tryCatch(Output out, TryCatchQuery tryCatchQuery);
 
 }

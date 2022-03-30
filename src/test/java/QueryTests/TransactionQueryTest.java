@@ -90,6 +90,7 @@ public class TransactionQueryTest {
                 tsQuery.toString());
     }
 
+    //TODO detect method (Insert, Update, Delete, Select) and build the correct query.
     @Test
     public void composedTransactionCommitted() {
         String table = "table";
@@ -103,5 +104,4 @@ public class TransactionQueryTest {
                 "BEGIN TRANSACTION INSERT INTO table (column1) VALUES (2) SELECT table.* FROM table WHERE table.column1 = 2 DELETE FROM table WHERE table.column1 = 2 UPDATE table SET table.column1=2 COMMIT TRANSACTION",
                 tsQuery.toString());
     }
-
 }

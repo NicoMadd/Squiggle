@@ -46,6 +46,10 @@ public class Squiggle {
         return new TransactionQuery();
     }
 
+    public static TryCatchQuery tryCatchQuery() {
+        return new TryCatchQuery();
+    }
+
     public static void setParser(Parser parser) {
         Squiggle.parser = parser;
     }
