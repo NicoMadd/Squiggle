@@ -10,9 +10,9 @@ import java.util.Map.Entry;
 import com.squiggle.base.AggregatedColumn;
 import com.squiggle.base.Column;
 import com.squiggle.base.ColumnDef;
-import com.squiggle.base.JoinCriteria;
 import com.squiggle.base.Row;
 import com.squiggle.base.Table;
+import com.squiggle.base.Joins.JoinCriteria;
 import com.squiggle.base.Transactables.Commit;
 import com.squiggle.base.Transactables.Rollback;
 import com.squiggle.base.Transactables.Transactable;
@@ -128,19 +128,28 @@ public class MySQLParser extends Parser {
 
     private void addFroms(Output out, List<Table> usedTables, List<JoinCriteria> joins) {
 
+        // Add the first table
+        Table firstTable = usedTables.get(0);
+        firstTable.write(out);
+
+        usedTables.remove(0);
+
         iterateParserableCollection(out, joins, (output, currentJoin, hasNext) -> {
-            out.print(currentJoin);
+            out.space();
+            currentJoin.write(out);
             JoinCriteria join = (JoinCriteria) currentJoin;
             // if table in usedTables, remove it
             usedTables.remove(join.getSource().getTable());
             usedTables.remove(join.getDest().getTable());
-
+            // out.space();
         });
 
         // iterate through all tables used in query and add them to the FROM clause and
         // dont add , if its the last one
 
         iterateParserableCollection(out, usedTables, (output, currentTable, hasNext) -> {
+            out.print(",");
+            out.space();
             currentTable.write(out);
             if (hasNext) {
                 out.print(",");
@@ -527,6 +536,31 @@ public class MySQLParser extends Parser {
             out.print(table.getAlias());
         }
 
+    }
+
+    @Override
+    public void join(Output out, JoinCriteria joinCriteria) {
+        String type = joinCriteria.getJoinType().getType();
+        Column source = joinCriteria.getSource();
+        Column dest = joinCriteria.getDest();
+
+        out.print(type);
+        out.space();
+        out.print("JOIN");
+        out.space();
+
+        // the table being joined
+
+        dest.getTable().write(out);
+        out.space();
+
+        out.print("ON");
+        out.space();
+        out.print(source);
+        out.space();
+        out.print("=");
+        out.space();
+        out.print(dest);
     }
 
 }

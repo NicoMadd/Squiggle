@@ -2,6 +2,7 @@ package com.squiggle.queries;
 
 import java.util.*;
 import com.squiggle.base.*;
+import com.squiggle.base.Joins.JoinCriteria;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.exceptions.NoValuesInsertedException;

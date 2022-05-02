@@ -1,9 +1,9 @@
-package SQLServer.QueryTests;
+package MySQL.QueryTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.squiggle.Squiggle;
-import com.squiggle.parsers.SqlServerParser;
+import com.squiggle.parsers.MySQLParser;
 import com.squiggle.queries.SelectQuery;
 
 import org.junit.jupiter.api.AfterAll;
@@ -14,7 +14,7 @@ public class JoinsQueryTest {
 
         @BeforeAll
         public static void setUp() {
-                Squiggle.setParser(new SqlServerParser());
+                Squiggle.setParser(new MySQLParser());
         }
 
         @Test

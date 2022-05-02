@@ -69,7 +69,7 @@ public class SelectQueryTest {
         SelectQuery select = Squiggle.Select().from("table1").select("column1").join("column1", "table2", "column2")
                 .select("column2");
         assertEquals(
-                "SELECT table1.column1, table2.column2 FROM table1 JOIN table2 ON table1.column1 = table2.column2",
+                "SELECT table1.column1, table2.column2 FROM table1 INNER JOIN table2 ON table1.column1 = table2.column2",
                 select.toString());
     }
 
