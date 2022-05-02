@@ -280,4 +280,32 @@ public class SelectQuery extends Query {
         return this.joins;
     }
 
+    // TODO provide a way to implement joins, left join, right join, inner join,
+    // outer join
+
+    public SelectQuery join(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
+        return addJoin(new JoinCriteria(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
+                .from(destTable);
+    }
+
+    public SelectQuery join(String srcColumnname, String destTable, String destColumnname) {
+        Table dstTable = new Table(destTable);
+        return addJoin(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery join(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
+        Table dstTable = new Table(destTable, tableAlias);
+        return addJoin(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery leftJoin(String string, String string2, String string3) {
+        return null;
+    }
+
+    public SelectQuery rightJoin(String string, String string2, String string3) {
+        return null;
+    }
+
 }
