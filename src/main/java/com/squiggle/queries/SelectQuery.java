@@ -20,6 +20,7 @@ import com.squiggle.base.Joins.LeftJoin;
 import com.squiggle.base.Joins.OuterJoin;
 import com.squiggle.base.Joins.RightJoin;
 import com.squiggle.builders.CriteriaBuilder;
+import com.squiggle.builders.JoinConditionBuilder;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.functions.Average;
@@ -280,6 +281,11 @@ public class SelectQuery extends Query {
         return innerJoin(srcColumnname, destTable, destColumnname);
     }
 
+    // public SelectQuery join(String columnName, Function<JoinConditionBuilder,
+    // JoinConditionBuilder> condition) {
+    // return innerJoin(columnName, condition);
+    // }
+
     // TODO provide a way to implement joins, left join, right join, inner join,
     // outer join
 
@@ -350,6 +356,13 @@ public class SelectQuery extends Query {
         return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
+
+    // public SelectQuery innerJoin(String srcColumnName,
+    // Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+    // JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder();
+    // JoinCondition join = condition.apply(joinConditionBuilder).build(this);
+    // return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnName), join));
+    // }
 
     public SelectQuery fullJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
         return addJoin(new FullJoin(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))

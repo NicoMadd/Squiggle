@@ -217,6 +217,14 @@ public class JoinsQueryTest {
                                 select.toString());
         }
 
+        // @Test
+        // public void innerJoinWithMultipleConditions() {
+        // SelectQuery select =
+        // Squiggle.Select().from("table1").select("column1").join("column1", join ->
+        // join.on("column2","table2").equals("", table) )
+
+        // }
+
         @AfterAll
         public static void tearDown() {
                 Squiggle.setParser(null);

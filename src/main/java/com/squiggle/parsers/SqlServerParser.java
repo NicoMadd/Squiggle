@@ -86,8 +86,8 @@ public class SqlServerParser extends Parser {
 
         // Add columns to select
         out.space();
-        appendList(out, selectQuery.listColumns(), ",");
 
+        appendList(out, selectQuery.listColumns(), ",");
         // Add tables to select from
         out.space();
         out.print("FROM");
@@ -440,7 +440,7 @@ public class SqlServerParser extends Parser {
     @Override
     public void sum(Output out, AggregatedColumn aggregatedColumn) {
 
-        System.out.println(aggregatedColumn.getAlias());
+        // System.out.println(aggregatedColumn.getAlias());
         out.print("SUM");
         out.print("(");
         if (aggregatedColumn.getWriteWithTable())

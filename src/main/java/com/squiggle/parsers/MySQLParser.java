@@ -440,7 +440,6 @@ public class MySQLParser extends Parser {
     @Override
     public void sum(Output out, AggregatedColumn aggregatedColumn) {
 
-        System.out.println(aggregatedColumn.getAlias());
         out.print("SUM");
         out.print("(");
         if (aggregatedColumn.getWriteWithTable())
