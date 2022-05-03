@@ -1,4 +1,4 @@
-package SQLServer.Other.Logic.Outputables;
+package Other.Logic.Outputables;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
