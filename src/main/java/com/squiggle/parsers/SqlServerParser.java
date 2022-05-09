@@ -12,6 +12,7 @@ import com.squiggle.base.Column;
 import com.squiggle.base.ColumnDef;
 import com.squiggle.base.Row;
 import com.squiggle.base.Table;
+import com.squiggle.base.Joins.JoinCondition;
 import com.squiggle.base.Joins.JoinCriteria;
 import com.squiggle.base.Transactables.Commit;
 import com.squiggle.base.Transactables.Rollback;
@@ -139,8 +140,9 @@ public class SqlServerParser extends Parser {
             currentJoin.write(out);
             JoinCriteria join = (JoinCriteria) currentJoin;
             // if table in usedTables, remove it
-            usedTables.remove(join.getSource().getTable());
-            usedTables.remove(join.getDest().getTable());
+
+            usedTables.remove(join.getSourceTable());
+            usedTables.remove(join.getDestTable());
             // out.space();
         });
 
@@ -543,24 +545,34 @@ public class SqlServerParser extends Parser {
         String type = joinCriteria.getJoinType().getType();
         Column source = joinCriteria.getSource();
         Column dest = joinCriteria.getDest();
+        JoinCondition joinCondition = joinCriteria.getJoinCondition();
 
         out.print(type);
         out.space();
         out.print("JOIN");
         out.space();
 
-        // the table being joined
+        // if dest column available then simple ON join
+        
+        if (dest != null) {
+            dest.getTable().write(out);
+            out.space();
 
-        dest.getTable().write(out);
-        out.space();
-
-        out.print("ON");
-        out.space();
-        out.print(source);
-        out.space();
-        out.print("=");
-        out.space();
-        out.print(dest);
+            out.print("ON");
+            out.space();
+            out.print(source);
+            out.space();
+            out.print("=");
+            out.space();
+            out.print(dest);
+        }else{
+            // if no dest column available then ON join with joinCondition
+            joinCondition.getTable().write(out);
+            out.space();
+            out.print("ON");
+            joinCondition.write(out);
+        }
     }
+
 
 }

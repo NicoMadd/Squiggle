@@ -8,8 +8,8 @@ public class InnerJoin extends JoinCriteria {
         super(source, dest, JoinType.INNER);
     }
 
-    // public InnerJoin(Column column, JoinCriteria join) {
-
-    // }
+    public InnerJoin(Column column, JoinCondition joinCondition) {
+        super(column,JoinType.INNER, joinCondition);
+    }
 
 }

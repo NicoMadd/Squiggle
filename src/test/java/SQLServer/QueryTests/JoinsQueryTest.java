@@ -217,13 +217,13 @@ public class JoinsQueryTest {
                                 select.toString());
         }
 
-        // @Test
-        // public void innerJoinWithMultipleConditions() {
-        // SelectQuery select =
-        // Squiggle.Select().from("table1").select("column1").join("column1", join ->
-        // join.on("column2","table2").equals("", table) )
+        @Test
+        public void innerJoinWithMultipleConditions() {
+        SelectQuery select = Squiggle.Select().from("table1")
+        .select("column1").join("column1", join -> join.from("table2").on("column2") );
+        assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1 = table2.column2", select.toString());
 
-        // }
+        }
 
         @AfterAll
         public static void tearDown() {
