@@ -553,7 +553,7 @@ public class SqlServerParser extends Parser {
         out.space();
 
         // if dest column available then simple ON join
-        
+
         if (dest != null) {
             dest.getTable().write(out);
             out.space();
@@ -565,14 +565,14 @@ public class SqlServerParser extends Parser {
             out.print("=");
             out.space();
             out.print(dest);
-        }else{
+        } else {
             // if no dest column available then ON join with joinCondition
             joinCondition.getTable().write(out);
             out.space();
             out.print("ON");
+            out.space();
             joinCondition.write(out);
         }
     }
-
 
 }

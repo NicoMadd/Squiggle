@@ -283,7 +283,7 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery join(String columnName, Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
-    return innerJoin(columnName, condition);
+        return innerJoin(columnName, condition);
     }
 
     // TODO provide a way to implement joins, left join, right join, inner join,
@@ -358,10 +358,11 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery innerJoin(String srcColumnName,
-    Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
-    JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder();
-    JoinCondition join = condition.apply(joinConditionBuilder).build();
-    return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnName), join));
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnName), join));
     }
 
     public SelectQuery fullJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {

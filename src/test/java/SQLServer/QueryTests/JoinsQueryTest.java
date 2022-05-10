@@ -18,7 +18,7 @@ public class JoinsQueryTest {
         }
 
         @Test
-        public void twoJoinedTablesOneColumnWithWhereSelect() {
+        public void simpleJoinWithWhere() {
                 SelectQuery select = Squiggle.Select().from("table1").select("column1").from("table2")
                                 .where("column1", c -> c.link("table1", "table2", "column2"))
                                 .select("column2");
@@ -27,7 +27,7 @@ public class JoinsQueryTest {
         }
 
         @Test
-        public void twoJoinedTablesOneColumnSelect() {
+        public void simpleInnerJoin() {
                 SelectQuery select = Squiggle.Select().from("table1").select("column1")
                                 .join("column1", "table2", "column2")
                                 .select("column2");
@@ -37,7 +37,7 @@ public class JoinsQueryTest {
         }
 
         @Test
-        public void threeJoinedTablesTwoColumnSelect() {
+        public void threeJoinedTables() {
                 SelectQuery select = Squiggle.Select().from("table1").select("column1")
                                 .join("column1", "table2", "column2")
                                 .join("column2", "table3", "column3")
@@ -218,10 +218,23 @@ public class JoinsQueryTest {
         }
 
         @Test
-        public void innerJoinWithMultipleConditions() {
-        SelectQuery select = Squiggle.Select().from("table1")
-        .select("column1").join("column1", join -> join.from("table2").on("column2") );
-        assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1 = table2.column2", select.toString());
+        public void innerJoinConditionBuilder() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").join("column1", join -> join.to("table2").on("column2"));
+                assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1 = table2.column2",
+                                select.toString());
+
+        }
+
+        @Test
+        public void innerJoinMultipleCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").join("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column2B").on("column2B"));
+
+                assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B",
+                                select.toString());
 
         }
 

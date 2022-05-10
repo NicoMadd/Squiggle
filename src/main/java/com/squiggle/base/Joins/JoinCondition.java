@@ -15,7 +15,7 @@ public class JoinCondition implements Outputable {
         this.table = table;
     }
 
-    public Table getTable(){
+    public Table getTable() {
         return table;
     }
 
@@ -23,8 +23,5 @@ public class JoinCondition implements Outputable {
     public void write(Output out) {
         out.print(logic.toString());
     }
-
-    
-    
 
 }

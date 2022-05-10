@@ -62,4 +62,12 @@ public class OutputableLogicTests {
                 assertEquals("arg1 = arg2 AND arg3 != arg4", lg.toString());
         }
 
+        @Test
+        public void multipleOutputableAnd() {
+                LogicBuilder lg = new LogicBuilder().that(new OutputableStub("arg1")).equals(new OutputableStub("arg2"))
+                                .and(new OutputableStub("arg3")).not(new OutputableStub("arg4"))
+                                .and(new OutputableStub("arg5")).equals(new OutputableStub("arg6"));
+                assertEquals("arg1 = arg2 AND arg3 != arg4 AND arg5 = arg6", lg.toString());
+        }
+
 }

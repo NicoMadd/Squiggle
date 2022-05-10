@@ -7,39 +7,63 @@ import com.squiggle.base.Joins.JoinCondition;
 public class JoinConditionBuilder {
 
     private LogicBuilder logicBuilder;
-    private Table table;
+    private Table fromTable;
+    private Table toTable;
+    private Boolean to;
+    private Boolean and;
 
     public JoinConditionBuilder() {
         this.logicBuilder = new LogicBuilder();
     }
 
+    public JoinConditionBuilder from(Column column) {
+        this.fromTable = column.getTable();
+        this.logicBuilder.that(column);
+        return this;
+    }
+
+    public JoinConditionBuilder to(String table) {
+        return to(new Table(table));
+    }
+
+    public JoinConditionBuilder to(Table table) {
+        this.toTable = table;
+        this.to = true;
+        return this;
+    }
+
     public JoinConditionBuilder on(String column) {
-        validateOn();
-        this.logicBuilder.that(table.getColumn(column));
-        return this;
+        return to ? on(toTable.getColumn(column)) : on(fromTable.getColumn(column));
     }
 
-    private void validateOn() {
-        if(table == null) {
-            throw new IllegalStateException("Table must be set before calling on");
+    public JoinConditionBuilder on(Column column) {
+        if (to) {
+            logicBuilder.equals(column);
+            this.to = false;
+        } else {
+            if (and) {
+                System.out.println("and: " + column);
+
+                logicBuilder.and(column);
+                and = false;
+            } else {
+                logicBuilder.that(column);
+            }
         }
-    }
 
-    public JoinConditionBuilder equals(String column, String table) {
-        this.logicBuilder.equals(new Column(new Table(table), column));
         return this;
     }
 
-    // public JoinConditionBuilder o
-
-    public JoinCondition build(Column source) {
-        
-        return new JoinCondition(logicBuilder,table);
+    public JoinConditionBuilder and(String column) {
+        return this.and(this.fromTable.getColumn(column));
     }
 
-    public JoinConditionBuilder from(String table) {
-        this.table = new Table(table);
-        return this;
+    public JoinConditionBuilder and(Column column) {
+        this.and = true;
+        return this.on(column);
     }
 
+    public JoinCondition build() {
+        return new JoinCondition(this.logicBuilder, this.toTable);
+    }
 }
