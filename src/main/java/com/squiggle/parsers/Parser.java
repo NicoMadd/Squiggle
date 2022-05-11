@@ -3,6 +3,7 @@ package com.squiggle.parsers;
 import com.squiggle.base.AggregatedColumn;
 import com.squiggle.base.Column;
 import com.squiggle.base.Table;
+import com.squiggle.base.Joins.JoinCriteria;
 import com.squiggle.base.Transactables.Commit;
 import com.squiggle.base.Transactables.Rollback;
 import com.squiggle.constraints.AutoIncrement;
@@ -78,5 +79,7 @@ public abstract class Parser {
     public abstract void transaction(Output out, TransactionQuery transactionQuery);
 
     public abstract void table(Output out, Table table);
+
+    public abstract void join(Output out, JoinCriteria joinCriteria);
 
 }

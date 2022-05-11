@@ -94,7 +94,6 @@ public class ColumnDefBuilder {
 
     public ColumnDefBuilder notNullable() {
         if (hasConstraint(Nullable.class)) {
-            System.out.println("thrown");
             throw new IllegalStateException("Column already has a nullable constraint");
         }
         this.constraints.add(new NotNullable());

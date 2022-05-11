@@ -38,9 +38,9 @@ import com.squiggle.queries.TableQueries.DropTableQuery;
 import com.squiggle.types.values.TypeValue;
 import com.squiggle.utils.TriConsumer;
 
-public class SqlServerParser extends Parser {
+public class MySQLParser extends Parser {
 
-    public SqlServerParser() {
+    public MySQLParser() {
     }
 
     /**

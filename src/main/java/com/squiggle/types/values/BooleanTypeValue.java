@@ -4,6 +4,7 @@ import com.squiggle.output.Output;
 
 public class BooleanTypeValue implements TypeValue {
 
+    static private boolean asText = false;
     Boolean boolValue;
 
     public BooleanTypeValue(Boolean boolValue) {
@@ -20,8 +21,15 @@ public class BooleanTypeValue implements TypeValue {
 
     @Override
     public void write(Output out) {
-        out.print(boolValue ? 1 : 0);
+        if (asText) {
+            out.print(boolValue.toString());
+        } else {
+            out.print(boolValue ? 1 : 0);
+        }
+    }
 
+    static public void setAsText(boolean asText) {
+        BooleanTypeValue.asText = asText;
     }
 
 }

@@ -6,11 +6,11 @@ I took this source code from https://code.google.com/archive/p/squiggle-sql/ who
 
 ## Objective
 
-Im planning on giving maintenance to it, and developing it even further since I believe its a useful project not to be left aside. The purpose of this is to create a tool optimized to create queries, thats it, thats the tweet (?. Haha okay..., jokes aside, its not an ORM to handle objects within databases, though im looking forward to a multi-DB release. I'll try to update it most of the time, any suggestion or improvement you see worth it, be my guest to suggest in the issue section or even more, fork it and PR later.
+Im planning on giving maintenance to it, and developing it even further since I believe its a useful project not to be left aside. The purpose of this is to create a tool optimized to create queries, thats it, thats the tweet (?. Haha okay..., jokes aside, its not an ORM to handle objects within databases, though im looking forward to multi-DB compatible releases. I'll try to update it most of the time, any suggestion or improvement you see worth it, be my guest to suggest in the issue section or even more, fork it and PR later.
 
 ## What we have
 
-Actually we are on v1.6.6. Squiggle can make
+Actually we are on v1.6.8. Squiggle can make
 
 - SELECT
 - INSERT
@@ -19,6 +19,12 @@ Actually we are on v1.6.6. Squiggle can make
 - CREATE TABLE
 - CREATE DATABASE
 - JOIN
+  - INNER
+  - LEFT
+  - RIGHT
+  - OUTER
+  - FULL
+  - ON CONDITION BUILDER
 - WHERE
 - GROUP BY
 - ORDER BY
@@ -38,12 +44,12 @@ Actually we are on v1.6.6. Squiggle can make
 ## Looking Forward
 
 In the future, I hope to add other SQL Engines in order to be Oracle, PostgreSQL and MySQL compatible.
-Also handle T-SQL such as commits and transactions, views and more table definitions.
+Also handle views and more table definitions as well as triggers.
 
 ## Parsers
 
 1. SQL SERVER - [X]
-2. MySQL - [ ]
+2. MySQL - [X]
 3. Oracle - [ ]
 4. PostgreSQL - [ ]
 
@@ -56,7 +62,7 @@ Also handle T-SQL such as commits and transactions, views and more table definit
 5. GROUP BY - [X]
 6. CREATE TABLE - [X]
 7. CREATE DATABASE - [X]
-8. CREATE VIEW - [ ]
-9. CREATE COMMIT - [ ]
-10. CREATE TRANSACTION - [ ]
+8. CREATE TRANSACTION - [X]
+9. CREATE COMMIT - [X]
+10. CREATE VIEW - [ ]
 11. TRIGGERS - [ ]

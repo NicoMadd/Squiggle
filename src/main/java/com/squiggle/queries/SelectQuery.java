@@ -10,11 +10,18 @@ import java.util.function.Function;
 
 import com.squiggle.base.Column;
 import com.squiggle.base.Criteria;
-import com.squiggle.base.JoinCriteria;
 import com.squiggle.base.NoCriteria;
 import com.squiggle.base.Order;
 import com.squiggle.base.Table;
+import com.squiggle.base.Joins.FullJoin;
+import com.squiggle.base.Joins.InnerJoin;
+import com.squiggle.base.Joins.JoinCondition;
+import com.squiggle.base.Joins.JoinCriteria;
+import com.squiggle.base.Joins.LeftJoin;
+import com.squiggle.base.Joins.OuterJoin;
+import com.squiggle.base.Joins.RightJoin;
 import com.squiggle.builders.CriteriaBuilder;
+import com.squiggle.builders.JoinConditionBuilder;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.functions.Average;
@@ -157,31 +164,6 @@ public class SelectQuery extends Query {
         return this;
     }
 
-    private SelectQuery addJoin(JoinCriteria joinCriteria) {
-        this.joins.add(joinCriteria);
-        return this;
-    }
-
-    /**
-     * Syntax sugar for addCriteria(JoinCriteria)
-     */
-    public SelectQuery join(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
-        return addJoin(new JoinCriteria(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
-                .from(destTable);
-    }
-
-    public SelectQuery join(String srcColumnname, String destTable, String destColumnname) {
-        Table dstTable = new Table(destTable);
-        return addJoin(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
-                .from(dstTable);
-    }
-
-    public SelectQuery join(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
-        Table dstTable = new Table(destTable, tableAlias);
-        return addJoin(new JoinCriteria(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
-                .from(dstTable);
-    }
-
     public SelectQuery groupBy(Column column) {
         groupBys.add(column);
         return this;
@@ -278,6 +260,158 @@ public class SelectQuery extends Query {
 
     public List<JoinCriteria> getJoins() {
         return this.joins;
+    }
+
+    private SelectQuery addJoin(JoinCriteria joinCriteria) {
+        this.joins.add(joinCriteria);
+        return this;
+    }
+
+    /**
+     * Syntax sugar for addCriteria(JoinCriteria)
+     */
+    public SelectQuery join(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
+        return innerJoin(srcTable, srcColumnname, destTable, destColumnname);
+    }
+
+    public SelectQuery join(String srcColumnname, String destTable, String destColumnname) {
+        return innerJoin(srcColumnname, destTable, destColumnname);
+    }
+
+    public SelectQuery join(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
+        return innerJoin(srcColumnname, destTable, destColumnname);
+    }
+
+    public SelectQuery join(String columnName, Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        return innerJoin(columnName, condition);
+    }
+
+    // TODO provide a way to implement joins, left join, right join, inner join,
+    // outer join
+
+    public SelectQuery leftJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
+        return addJoin(new LeftJoin(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
+                .from(destTable);
+    }
+
+    public SelectQuery leftJoin(String srcColumnname, String destTable, String destColumnname) {
+        Table dstTable = new Table(destTable);
+        return addJoin(new LeftJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery leftJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
+        Table dstTable = new Table(destTable, tableAlias);
+        return addJoin(new LeftJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery leftJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new LeftJoin(this.baseTable.getColumn(srcColumnName), join));
+    }
+
+    public SelectQuery rightJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
+        return addJoin(new RightJoin(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
+                .from(destTable);
+    }
+
+    public SelectQuery rightJoin(String srcColumnname, String destTable, String destColumnname) {
+        Table dstTable = new Table(destTable);
+        return addJoin(new RightJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery rightJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
+        Table dstTable = new Table(destTable, tableAlias);
+        return addJoin(new RightJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery rightJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new RightJoin(this.baseTable.getColumn(srcColumnName), join));
+    }
+
+    public SelectQuery outerJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
+        return addJoin(new OuterJoin(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
+                .from(destTable);
+    }
+
+    public SelectQuery outerJoin(String srcColumnname, String destTable, String destColumnname) {
+        Table dstTable = new Table(destTable);
+        return addJoin(new OuterJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery outerJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
+        Table dstTable = new Table(destTable, tableAlias);
+        return addJoin(new OuterJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery outerJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new OuterJoin(this.baseTable.getColumn(srcColumnName), join));
+    }
+
+    public SelectQuery innerJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
+        return addJoin(new InnerJoin(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
+                .from(destTable);
+    }
+
+    public SelectQuery innerJoin(String srcColumnname, String destTable, String destColumnname) {
+        Table dstTable = new Table(destTable);
+        return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery innerJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
+        Table dstTable = new Table(destTable, tableAlias);
+        return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery innerJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnName), join));
+    }
+
+    public SelectQuery fullJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
+        return addJoin(new FullJoin(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
+                .from(destTable);
+    }
+
+    public SelectQuery fullJoin(String srcColumnname, String destTable, String destColumnname) {
+        Table dstTable = new Table(destTable);
+        return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery fullJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
+        Table dstTable = new Table(destTable, tableAlias);
+        return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+                .from(dstTable);
+    }
+
+    public SelectQuery fullJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnName), join));
     }
 
 }
