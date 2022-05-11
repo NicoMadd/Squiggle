@@ -8,4 +8,8 @@ public class OuterJoin extends JoinCriteria {
         super(source, dest, JoinType.OUTER);
     }
 
+    public OuterJoin(Column column, JoinCondition joinCondition) {
+        super(column, JoinType.OUTER, joinCondition);
+    }
+
 }

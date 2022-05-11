@@ -8,4 +8,8 @@ public class RightJoin extends JoinCriteria {
         super(source, dest, JoinType.RIGHT);
     }
 
+    public RightJoin(Column column, JoinCondition joinCondition) {
+        super(column, JoinType.RIGHT, joinCondition);
+    }
+
 }

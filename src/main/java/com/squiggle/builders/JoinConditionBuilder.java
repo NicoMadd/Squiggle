@@ -9,8 +9,6 @@ public class JoinConditionBuilder {
     private LogicBuilder logicBuilder;
     private Table fromTable;
     private Table toTable;
-    private Boolean to;
-    private Boolean and;
 
     public JoinConditionBuilder() {
         this.logicBuilder = new LogicBuilder();
@@ -28,29 +26,15 @@ public class JoinConditionBuilder {
 
     public JoinConditionBuilder to(Table table) {
         this.toTable = table;
-        this.to = true;
         return this;
     }
 
     public JoinConditionBuilder on(String column) {
-        return to ? on(toTable.getColumn(column)) : on(fromTable.getColumn(column));
+        return on(this.toTable.getColumn(column));
     }
 
     public JoinConditionBuilder on(Column column) {
-        if (to) {
-            logicBuilder.equals(column);
-            this.to = false;
-        } else {
-            if (and) {
-                System.out.println("and: " + column);
-
-                logicBuilder.and(column);
-                and = false;
-            } else {
-                logicBuilder.that(column);
-            }
-        }
-
+        this.logicBuilder.equals(column);
         return this;
     }
 
@@ -59,8 +43,8 @@ public class JoinConditionBuilder {
     }
 
     public JoinConditionBuilder and(Column column) {
-        this.and = true;
-        return this.on(column);
+        this.logicBuilder.and(column);
+        return this;
     }
 
     public JoinCondition build() {

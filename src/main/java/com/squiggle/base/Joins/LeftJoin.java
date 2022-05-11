@@ -8,4 +8,8 @@ public class LeftJoin extends JoinCriteria {
         super(source, dest, JoinType.LEFT);
     }
 
+    public LeftJoin(Column column, JoinCondition joinCondition) {
+        super(column, JoinType.LEFT, joinCondition);
+    }
+
 }

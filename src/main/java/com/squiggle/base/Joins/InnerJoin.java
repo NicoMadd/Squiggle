@@ -9,7 +9,7 @@ public class InnerJoin extends JoinCriteria {
     }
 
     public InnerJoin(Column column, JoinCondition joinCondition) {
-        super(column,JoinType.INNER, joinCondition);
+        super(column, JoinType.INNER, joinCondition);
     }
 
 }

@@ -8,4 +8,8 @@ public class FullJoin extends JoinCriteria {
         super(source, dest, JoinType.FULL);
     }
 
+    public FullJoin(Column column, JoinCondition joinCondition) {
+        super(column, JoinType.FULL, joinCondition);
+    }
+
 }

@@ -227,15 +227,141 @@ public class JoinsQueryTest {
         }
 
         @Test
-        public void innerJoinMultipleCondition() {
+        public void commonInnerJoinTwoEqualityCondition() {
                 SelectQuery select = Squiggle.Select().from("table1")
                                 .select("column1").join("column1A",
                                                 join -> join.to("table2").on("column2A")
-                                                                .and("column2B").on("column2B"));
+                                                                .and("column1B").on("column2B"));
 
                 assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B",
                                 select.toString());
+        }
 
+        @Test
+        public void innerJoinTwoEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").innerJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B"));
+
+                assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B",
+                                select.toString());
+        }
+
+        @Test
+        public void leftJoinTwoEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").leftJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B"));
+
+                assertEquals("SELECT table1.column1 FROM table1 LEFT JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B",
+                                select.toString());
+        }
+
+        @Test
+        public void rightJoinTwoEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").rightJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B"));
+
+                assertEquals("SELECT table1.column1 FROM table1 RIGHT JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B",
+                                select.toString());
+        }
+
+        @Test
+        public void fullJoinTwoEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").fullJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B"));
+
+                assertEquals("SELECT table1.column1 FROM table1 FULL JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B",
+                                select.toString());
+        }
+
+        @Test
+        public void outerJoinTwoEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").outerJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B"));
+
+                assertEquals("SELECT table1.column1 FROM table1 OUTER JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B",
+                                select.toString());
+        }
+
+        @Test
+        public void commonInnerJoinThreeEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").join("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B")
+                                                                .and("column1C").on("column2C"));
+
+                assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B AND table1.column1C = table2.column2C",
+                                select.toString());
+        }
+
+        @Test
+        public void innerJoinThreeEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").innerJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B")
+                                                                .and("column1C").on("column2C"));
+
+                assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B AND table1.column1C = table2.column2C",
+                                select.toString());
+        }
+
+        @Test
+        public void leftJoinThreeEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").leftJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B")
+                                                                .and("column1C").on("column2C"));
+
+                assertEquals("SELECT table1.column1 FROM table1 LEFT JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B AND table1.column1C = table2.column2C",
+                                select.toString());
+        }
+
+        @Test
+        public void rightJoinThreeEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").rightJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B")
+                                                                .and("column1C").on("column2C"));
+
+                assertEquals("SELECT table1.column1 FROM table1 RIGHT JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B AND table1.column1C = table2.column2C",
+                                select.toString());
+        }
+
+        @Test
+        public void fullJoinThreeEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").fullJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B")
+                                                                .and("column1C").on("column2C"));
+
+                assertEquals("SELECT table1.column1 FROM table1 FULL JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B AND table1.column1C = table2.column2C",
+                                select.toString());
+        }
+
+        @Test
+        public void outerJoinThreeEqualityCondition() {
+                SelectQuery select = Squiggle.Select().from("table1")
+                                .select("column1").outerJoin("column1A",
+                                                join -> join.to("table2").on("column2A")
+                                                                .and("column1B").on("column2B")
+                                                                .and("column1C").on("column2C"));
+
+                assertEquals("SELECT table1.column1 FROM table1 OUTER JOIN table2 ON table1.column1A = table2.column2A AND table1.column1B = table2.column2B AND table1.column1C = table2.column2C",
+                                select.toString());
         }
 
         @AfterAll

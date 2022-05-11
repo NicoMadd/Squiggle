@@ -306,6 +306,14 @@ public class SelectQuery extends Query {
                 .from(dstTable);
     }
 
+    public SelectQuery leftJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new LeftJoin(this.baseTable.getColumn(srcColumnName), join));
+    }
+
     public SelectQuery rightJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
         return addJoin(new RightJoin(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
                 .from(destTable);
@@ -323,6 +331,14 @@ public class SelectQuery extends Query {
                 .from(dstTable);
     }
 
+    public SelectQuery rightJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new RightJoin(this.baseTable.getColumn(srcColumnName), join));
+    }
+
     public SelectQuery outerJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
         return addJoin(new OuterJoin(srcTable.getColumn(srcColumnname), destTable.getColumn(destColumnname)))
                 .from(destTable);
@@ -338,6 +354,14 @@ public class SelectQuery extends Query {
         Table dstTable = new Table(destTable, tableAlias);
         return addJoin(new OuterJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
+    }
+
+    public SelectQuery outerJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new OuterJoin(this.baseTable.getColumn(srcColumnName), join));
     }
 
     public SelectQuery innerJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
@@ -380,6 +404,14 @@ public class SelectQuery extends Query {
         Table dstTable = new Table(destTable, tableAlias);
         return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
+    }
+
+    public SelectQuery fullJoin(String srcColumnName,
+            Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
+        JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
+                .from(this.baseTable.getColumn(srcColumnName));
+        JoinCondition join = condition.apply(joinConditionBuilder).build();
+        return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnName), join));
     }
 
 }
