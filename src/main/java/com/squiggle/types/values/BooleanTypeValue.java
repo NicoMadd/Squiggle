@@ -32,4 +32,12 @@ public class BooleanTypeValue implements TypeValue {
         BooleanTypeValue.asText = asText;
     }
 
+    static public void asText() {
+        BooleanTypeValue.asText = true;
+    }
+
+    static public void asInt() {
+        BooleanTypeValue.asText = false;
+    }
+
 }

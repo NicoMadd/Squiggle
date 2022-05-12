@@ -24,7 +24,11 @@ public class JoinConditionBuilder {
         return to(new Table(table));
     }
 
-    public JoinConditionBuilder to(Table table) {
+    public JoinConditionBuilder to(String table, String tableAlias) {
+        return to(new Table(table, tableAlias));
+    }
+
+    private JoinConditionBuilder to(Table table) {
         this.toTable = table;
         return this;
     }
@@ -33,7 +37,7 @@ public class JoinConditionBuilder {
         return on(this.toTable.getColumn(column));
     }
 
-    public JoinConditionBuilder on(Column column) {
+    private JoinConditionBuilder on(Column column) {
         this.logicBuilder.equals(column);
         return this;
     }
@@ -42,8 +46,38 @@ public class JoinConditionBuilder {
         return this.and(this.fromTable.getColumn(column));
     }
 
-    public JoinConditionBuilder and(Column column) {
+    private JoinConditionBuilder and(Column column) {
         this.logicBuilder.and(column);
+        return this;
+    }
+
+    public JoinConditionBuilder is(String strValue) {
+        this.logicBuilder.equals(strValue);
+        return this;
+    }
+
+    public JoinConditionBuilder is(Integer intValue) {
+        this.logicBuilder.equals(intValue);
+        return this;
+    }
+
+    public JoinConditionBuilder is(Float floatValue) {
+        this.logicBuilder.equals(floatValue);
+        return this;
+    }
+
+    public JoinConditionBuilder is(Double doubleValue) {
+        this.logicBuilder.equals(doubleValue);
+        return this;
+    }
+
+    public JoinConditionBuilder is(Boolean boolValue) {
+        this.logicBuilder.equals(boolValue);
+        return this;
+    }
+
+    public JoinConditionBuilder is(Object column) {
+        this.logicBuilder.equals(column);
         return this;
     }
 

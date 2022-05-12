@@ -414,4 +414,23 @@ public class SelectQuery extends Query {
         return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnName), join));
     }
 
+    /*
+     * FIXME
+     * This comes as a solution to change the joining table being used. Other
+     * alternative it to change the method signature of the different join methods
+     * but it would break the whole parser. Maybe take into account for future
+     * implementations.
+     * 
+     */
+
+    private JoinCriteria getLastJoinCriteria() {
+        return getJoins().get(getJoins().size() - 1);
+    }
+
+    public SelectQuery useJoinedTable() {
+        Table lastJoinedTable = getLastJoinCriteria().getJoinCondition().getTable();
+        this.from(lastJoinedTable);
+        return this;
+    }
+
 }
