@@ -8,6 +8,7 @@ import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.SelectQuery;
+import com.squiggle.types.values.BooleanTypeValue;
 
 public class SelectQueryTest {
 
@@ -89,14 +90,32 @@ public class SelectQueryTest {
 
     @Test
     public void simpleStringWhere() {
-        SelectQuery select = Squiggle.Select().from("table").select("*").where("column", c -> c.equals("value"));
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.equals("value"));
         assertEquals("SELECT table.* FROM table WHERE table.column = 'value'", select.toString());
     }
 
     @Test
     public void simpleIntWhere() {
-        SelectQuery select = Squiggle.Select().from("table").select("*").where("column", c -> c.equals(1));
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.equals(1));
         assertEquals("SELECT table.* FROM table WHERE table.column = 1", select.toString());
+    }
+
+    @Test
+    public void simpleBooleanWhereAsInt() {
+        BooleanTypeValue.asInt();
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.equals(true));
+        assertEquals("SELECT table.* FROM table WHERE table.column = 1", select.toString());
+    }
+
+    @Test
+    public void simpleBooleanWhereAsText() {
+        BooleanTypeValue.asText();
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.equals(true));
+        assertEquals("SELECT table.* FROM table WHERE table.column = true", select.toString());
     }
 
     @Test

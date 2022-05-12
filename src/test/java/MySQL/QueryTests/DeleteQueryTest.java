@@ -10,12 +10,20 @@ import com.squiggle.base.MatchCriteria;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.parsers.MySQLParser;
 import com.squiggle.queries.DeleteQuery;
+import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
 public class DeleteQueryTest {
 
     @BeforeAll
     public static void setUp() {
         Squiggle.setParser(new MySQLParser());
+    }
+
+    @BeforeEach
+    public void setUpEach() {
+        FloatTypeValue.defaultFormat();
+        BooleanTypeValue.asText();
     }
 
     @Test

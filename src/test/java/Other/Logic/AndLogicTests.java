@@ -2,13 +2,10 @@ package Other.Logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.squiggle.Squiggle;
 import com.squiggle.builders.LogicBuilder;
-import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class AndLogicTests {
@@ -49,6 +46,7 @@ public class AndLogicTests {
 
         @Test
         public void simpleFloatFloatAnd() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals(1.0f).and(2.0f).equals(2.0f);
                 assertEquals("1.000000 = 1.000000 AND 2.000000 = 2.000000", lg.toString());
         }
@@ -90,6 +88,7 @@ public class AndLogicTests {
 
         @Test
         public void tripleFloatAnd() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals(1.0f).and(2.0f).equals(2.0f).and(3.0f)
                                 .equals(3.0f);
                 assertEquals("1.000000 = 1.000000 AND 2.000000 = 2.000000 AND 3.000000 = 3.000000", lg.toString());

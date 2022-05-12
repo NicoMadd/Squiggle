@@ -1,5 +1,9 @@
 package com.squiggle.parsers;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
 import com.squiggle.base.AggregatedColumn;
 import com.squiggle.base.Column;
 import com.squiggle.base.Table;
@@ -14,6 +18,7 @@ import com.squiggle.constraints.Nullable;
 import com.squiggle.constraints.PrimaryKey;
 import com.squiggle.constraints.Unique;
 import com.squiggle.output.Output;
+import com.squiggle.output.Outputable;
 import com.squiggle.queries.CreateDatabaseQuery;
 import com.squiggle.queries.DeleteQuery;
 import com.squiggle.queries.DropDatabaseQuery;
@@ -23,11 +28,46 @@ import com.squiggle.queries.TransactionQuery;
 import com.squiggle.queries.UpdateQuery;
 import com.squiggle.queries.TableQueries.CreateTableQuery;
 import com.squiggle.queries.TableQueries.DropTableQuery;
+import com.squiggle.utils.TriConsumer;
 
 public abstract class Parser {
 
     public Parser() {
 
+    }
+
+    /**
+     * Iterate through a Set and execute a function on each
+     * entry.
+     */
+    protected void iterateEntryCollection(Output out, Collection<Entry<? extends Parserable, ? extends Outputable>> set,
+            TriConsumer<Output, Entry<? extends Parserable, ? extends Outputable>, Boolean> consumer) {
+        for (Iterator<Entry<? extends Parserable, ? extends Outputable>> i = set.iterator(); i.hasNext();)
+            consumer.accept(out, i.next(), i.hasNext());
+    }
+
+    /**
+     * Iterate through a Parserable Collection and execute a function on each
+     * entry.
+     */
+    protected void iterateParserableCollection(Output out, Collection<? extends Parserable> parserables,
+            TriConsumer<Output, ? super Parserable, Boolean> consumer) {
+        for (Iterator<? extends Parserable> i = parserables.iterator(); i.hasNext();)
+            consumer.accept(out, i.next(), i.hasNext());
+    }
+
+    /**
+     * Iterate through a Collection and append all entries (using .toString()) to a
+     * StringBuffer.
+     */
+    protected void appendList(Output out, Collection<? extends Parserable> parserables, String separator) {
+        this.iterateParserableCollection(out, parserables, (output, current, hasNext) -> {
+            current.write(out);
+            if (hasNext) {
+                out.print(separator);
+                out.space();
+            }
+        });
     }
 
     public abstract void selectQuery(SelectQuery selectQuery, Output out);

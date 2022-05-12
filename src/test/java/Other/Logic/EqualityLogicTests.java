@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.squiggle.builders.LogicBuilder;
 import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -161,30 +162,35 @@ public class EqualityLogicTests {
 
         @Test
         public void simpleFloatStringInequality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals("arg2");
                 assertEquals("1.000000 = 'arg2'", lg.toString());
         }
 
         @Test
         public void simpleFloatIntegerInequality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals(1);
                 assertEquals("1.000000 = 1", lg.toString());
         }
 
         @Test
         public void simpleFloatDoubleInequality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals(1.0);
                 assertEquals("1.000000 = 1.0", lg.toString());
         }
 
         @Test
         public void simpleFloatBooleanInequality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals(true);
                 assertEquals("1.000000 = 1", lg.toString());
         }
 
         @Test
         public void simpleFloatFloatInequality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals(1.0f);
                 assertEquals("1.000000 = 1.000000", lg.toString());
         }

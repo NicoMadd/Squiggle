@@ -8,9 +8,11 @@ import com.squiggle.Squiggle;
 import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.SelectQuery;
 import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +22,12 @@ public class LeftJoinValuesTest {
         @BeforeAll
         public static void setUp() {
                 Squiggle.setParser(new SqlServerParser());
+        }
+
+        @BeforeEach
+        public void setUpEach() {
+                FloatTypeValue.defaultFormat();
+                BooleanTypeValue.asText();
         }
 
         @Test
@@ -54,7 +62,7 @@ public class LeftJoinValuesTest {
                                                 join -> join.to("tableB").on("columnB1")
                                                                 .and("columnA2").is(1.1f));
 
-                assertEquals("SELECT tableA.column1 FROM tableA LEFT JOIN tableB ON tableA.columnA1 = tableB.columnB1 AND tableA.columnA2 = 1.100000",
+                assertEquals("SELECT tableA.column1 FROM tableA LEFT JOIN tableB ON tableA.columnA1 = tableB.columnB1 AND tableA.columnA2 = 1.1",
                                 select.toString());
         }
 

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.squiggle.builders.LogicBuilder;
 import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,9 @@ public class InequalityLogicTests {
 
         @AfterEach
         public void tearDown() {
+                FloatTypeValue.defaultFormat();
                 BooleanTypeValue.setAsText(false);
+
         }
 
         @Test
@@ -104,12 +107,14 @@ public class InequalityLogicTests {
 
         @Test
         public void simpleBooleanIntegerEquality() {
+                BooleanTypeValue.asInt();
                 LogicBuilder lg = new LogicBuilder().that(true).not(1);
                 assertEquals("1 != 1", lg.toString());
         }
 
         @Test
         public void simpleBooleanFloatEquality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(true).not(1.0f);
                 assertEquals("1 != 1.000000", lg.toString());
         }
@@ -161,30 +166,35 @@ public class InequalityLogicTests {
 
         @Test
         public void simpleFloatStringEquality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).not("arg2");
                 assertEquals("1.000000 != 'arg2'", lg.toString());
         }
 
         @Test
         public void simpleFloatIntegerEquality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).not(1);
                 assertEquals("1.000000 != 1", lg.toString());
         }
 
         @Test
         public void simpleFloatDoubleEquality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).not(1.0);
                 assertEquals("1.000000 != 1.0", lg.toString());
         }
 
         @Test
         public void simpleFloatBooleanEquality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).not(true);
                 assertEquals("1.000000 != 1", lg.toString());
         }
 
         @Test
         public void simpleFloatFloatEquality() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).not(1.0f);
                 assertEquals("1.000000 != 1.000000", lg.toString());
         }

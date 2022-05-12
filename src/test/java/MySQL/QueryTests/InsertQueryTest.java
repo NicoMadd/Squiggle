@@ -10,12 +10,20 @@ import com.squiggle.exceptions.NoTableException;
 import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.parsers.MySQLParser;
 import com.squiggle.queries.InsertQuery;
+import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
 public class InsertQueryTest {
 
         @BeforeAll
         public static void setUp() {
                 Squiggle.setParser(new MySQLParser());
+        }
+
+        @BeforeEach
+        public void setUpEach() {
+                FloatTypeValue.defaultFormat();
+                BooleanTypeValue.asText();
         }
 
         @Test
@@ -84,6 +92,7 @@ public class InsertQueryTest {
 
         @Test
         public void floatInsert() {
+                FloatTypeValue.setFormat("#.000000");
                 InsertQuery insert = Squiggle.Insert().into("table").to("floatCol").value(3.0f);
                 assertEquals(
                                 "INSERT INTO table (floatCol) VALUES (3.000000)",
@@ -100,6 +109,7 @@ public class InsertQueryTest {
 
         @Test
         public void boolInsert() {
+                BooleanTypeValue.asInt();
                 InsertQuery insert = Squiggle.Insert().into("table").to("boolCol").value(true);
                 assertEquals(
                                 "INSERT INTO table (boolCol) VALUES (1)",

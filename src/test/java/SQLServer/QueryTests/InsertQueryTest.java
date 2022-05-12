@@ -10,6 +10,7 @@ import com.squiggle.exceptions.NoTableException;
 import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.InsertQuery;
+import com.squiggle.types.values.BooleanTypeValue;
 
 public class InsertQueryTest {
 
@@ -86,7 +87,7 @@ public class InsertQueryTest {
         public void floatInsert() {
                 InsertQuery insert = Squiggle.Insert().into("table").to("floatCol").value(3.0f);
                 assertEquals(
-                                "INSERT INTO table (floatCol) VALUES (3.000000)",
+                                "INSERT INTO table (floatCol) VALUES (3)",
                                 insert.toString());
         }
 
@@ -100,6 +101,7 @@ public class InsertQueryTest {
 
         @Test
         public void boolInsert() {
+                BooleanTypeValue.asInt();
                 InsertQuery insert = Squiggle.Insert().into("table").to("boolCol").value(true);
                 assertEquals(
                                 "INSERT INTO table (boolCol) VALUES (1)",

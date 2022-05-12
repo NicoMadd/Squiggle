@@ -2,14 +2,10 @@ package Other.Logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.squiggle.Squiggle;
 import com.squiggle.builders.LogicBuilder;
-import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.types.values.BooleanTypeValue;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class OrLogicTests {

@@ -43,40 +43,6 @@ public class MySQLParser extends Parser {
     public MySQLParser() {
     }
 
-    /**
-     * Iterate through a Set and execute a function on each
-     * entry.
-     */
-    private void iterateEntryCollection(Output out, Collection<Entry<? extends Parserable, ? extends Outputable>> set,
-            TriConsumer<Output, Entry<? extends Parserable, ? extends Outputable>, Boolean> consumer) {
-        for (Iterator<Entry<? extends Parserable, ? extends Outputable>> i = set.iterator(); i.hasNext();)
-            consumer.accept(out, i.next(), i.hasNext());
-    }
-
-    /**
-     * Iterate through a Parserable Collection and execute a function on each
-     * entry.
-     */
-    private void iterateParserableCollection(Output out, Collection<? extends Parserable> parserables,
-            TriConsumer<Output, ? super Parserable, Boolean> consumer) {
-        for (Iterator<? extends Parserable> i = parserables.iterator(); i.hasNext();)
-            consumer.accept(out, i.next(), i.hasNext());
-    }
-
-    /**
-     * Iterate through a Collection and append all entries (using .toString()) to a
-     * StringBuffer.
-     */
-    private void appendList(Output out, Collection<? extends Parserable> parserables, String separator) {
-        this.iterateParserableCollection(out, parserables, (output, current, hasNext) -> {
-            current.write(out);
-            if (hasNext) {
-                out.print(separator);
-                out.space();
-            }
-        });
-    }
-
     @Override
     public void selectQuery(SelectQuery selectQuery, Output out) {
 
