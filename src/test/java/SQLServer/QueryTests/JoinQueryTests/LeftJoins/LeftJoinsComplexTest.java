@@ -2,12 +2,9 @@ package SQLServer.QueryTests.JoinQueryTests.LeftJoins;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Date;
-
 import com.squiggle.Squiggle;
 import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.SelectQuery;
-import com.squiggle.types.values.BooleanTypeValue;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
