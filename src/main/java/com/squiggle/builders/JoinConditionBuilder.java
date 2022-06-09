@@ -9,6 +9,7 @@ public class JoinConditionBuilder {
     private LogicBuilder logicBuilder;
     private Table fromTable;
     private Table toTable;
+    private Table actualTable;
 
     public JoinConditionBuilder() {
         this.logicBuilder = new LogicBuilder();
@@ -16,6 +17,7 @@ public class JoinConditionBuilder {
 
     public JoinConditionBuilder from(Column column) {
         this.fromTable = column.getTable();
+        this.actualTable = this.fromTable;
         this.logicBuilder.that(column);
         return this;
     }
@@ -43,7 +45,7 @@ public class JoinConditionBuilder {
     }
 
     public JoinConditionBuilder and(String column) {
-        return this.and(this.fromTable.getColumn(column));
+        return this.and(this.actualTable.getColumn(column));
     }
 
     private JoinConditionBuilder and(Column column) {
@@ -78,6 +80,14 @@ public class JoinConditionBuilder {
 
     public JoinConditionBuilder is(Object column) {
         this.logicBuilder.equals(column);
+        return this;
+    }
+
+    public JoinConditionBuilder switchTable() {
+        if (this.toTable == null) {
+            throw new IllegalStateException("toTable is null");
+        }
+        this.actualTable = this.toTable;
         return this;
     }
 
