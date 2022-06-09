@@ -124,6 +124,17 @@ public class InsertQueryTest {
                                 insert.toString());
         }
 
+        @Test
+        public void insertNullValues() {
+                Integer nullInt = null;
+                String nullStr = null;
+                InsertQuery insert = Squiggle.Insert().into("table").to("column1").to("column2").value(nullInt)
+                                .value(nullStr);
+                assertEquals(
+                                "INSERT INTO table (column1, column2) VALUES (NULL, NULL)",
+                                insert.toString());
+        }
+
         @AfterAll
         public static void tearDown() {
                 Squiggle.setParser(null);
