@@ -50,6 +50,9 @@ public class SqlServerParser extends Parser {
         if (selectQuery.isDistinct()) {
             out.print(" DISTINCT");
         }
+        if (selectQuery.withLimit()) {
+            out.print(" TOP " + selectQuery.getLimit());
+        }
 
         // Add columns to select
         out.space();
@@ -88,7 +91,12 @@ public class SqlServerParser extends Parser {
             out.print("ORDER BY");
 
             appendList(out, selectQuery.listOrder(), ",");
+        }
 
+        // Add offset
+        if (selectQuery.withOffset()) {
+            out.space();
+            out.print("OFFSET " + selectQuery.getOffset());
         }
 
     }

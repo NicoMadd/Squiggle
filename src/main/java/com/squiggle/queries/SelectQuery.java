@@ -39,9 +39,13 @@ public class SelectQuery extends Query {
     protected Set<Order> order;
     protected List<JoinCriteria> joins;
     protected List<Column> groupBys;
+    protected Integer limit;
+    protected Integer offset;
 
     public SelectQuery() {
         super();
+        this.limit = -1;
+        this.offset = -1;
         this.order = new HashSet<>();
         this.joins = new LinkedList<>();
         this.groupBys = new LinkedList<>();
@@ -431,6 +435,32 @@ public class SelectQuery extends Query {
         Table lastJoinedTable = getLastJoinCriteria().getJoinCondition().getTable();
         this.from(lastJoinedTable);
         return this;
+    }
+
+    public SelectQuery limit(int i) {
+        this.limit = i;
+        return this;
+    }
+
+    public Boolean withLimit() {
+        return this.limit > 0;
+    }
+
+    public Integer getLimit() {
+        return this.limit;
+    }
+
+    public SelectQuery offset(int i) {
+        this.offset = i;
+        return this;
+    }
+
+    public Boolean withOffset() {
+        return this.offset > 0;
+    }
+
+    public Integer getOffset() {
+        return this.offset;
     }
 
 }

@@ -3,6 +3,8 @@ package SQLServer.QueryTests;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Random;
+
 import com.squiggle.Squiggle;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
@@ -129,6 +131,28 @@ public class SelectQueryTest {
     public void selectWithColumnWithSpaces() {
         SelectQuery select = Squiggle.Select().from("table").select("Column 1", "alias");
         assertEquals("SELECT table.\"Column 1\" AS alias FROM table", select.toString());
+    }
+
+    @Test
+    public void selectWithLimit() {
+        Integer limit = new Random().nextInt(100);
+        SelectQuery select = Squiggle.Select().from("table").select("*").limit(limit);
+        assertEquals("SELECT TOP " + limit + " table.* FROM table", select.toString());
+    }
+
+    @Test
+    public void selectWithOffset() {
+        Integer offset = new Random().nextInt(100);
+        SelectQuery select = Squiggle.Select().from("table").select("*").offset(offset);
+        assertEquals("SELECT table.* FROM table OFFSET " + offset, select.toString());
+    }
+
+    @Test
+    public void selectWithLimitAndOffset() {
+        Integer limit = new Random().nextInt(100);
+        Integer offset = new Random().nextInt(100);
+        SelectQuery select = Squiggle.Select().from("table").select("*").limit(limit).offset(offset);
+        assertEquals("SELECT TOP " + limit + " table.* FROM table OFFSET " + offset, select.toString());
     }
 
     @AfterAll
