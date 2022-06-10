@@ -541,4 +541,9 @@ public class MySQLParser extends Parser {
         }
     }
 
+    @Override
+    public void validateOffset(SelectQuery selectQuery) {
+
+    }
+
 }

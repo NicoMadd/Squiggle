@@ -36,7 +36,6 @@ import com.squiggle.queries.UpdateQuery;
 import com.squiggle.queries.TableQueries.CreateTableQuery;
 import com.squiggle.queries.TableQueries.DropTableQuery;
 import com.squiggle.types.values.TypeValue;
-import com.squiggle.utils.TriConsumer;
 
 public class SqlServerParser extends Parser {
 
@@ -50,7 +49,7 @@ public class SqlServerParser extends Parser {
         if (selectQuery.isDistinct()) {
             out.print(" DISTINCT");
         }
-        if (selectQuery.withLimit()) {
+        if (selectQuery.withLimit() && !selectQuery.withOffset()) {
             out.print(" TOP " + selectQuery.getLimit());
         }
 
@@ -89,6 +88,7 @@ public class SqlServerParser extends Parser {
         if (selectQuery.listOrder().size() > 0) {
             out.space();
             out.print("ORDER BY");
+            out.space();
 
             appendList(out, selectQuery.listOrder(), ",");
         }
@@ -97,6 +97,10 @@ public class SqlServerParser extends Parser {
         if (selectQuery.withOffset()) {
             out.space();
             out.print("OFFSET " + selectQuery.getOffset());
+        }
+        if (selectQuery.withLimit() && selectQuery.withOffset()) {
+            out.space();
+            out.print("ROWS FETCH NEXT " + selectQuery.getLimit() + " ROWS ONLY");
         }
 
     }
@@ -547,6 +551,14 @@ public class SqlServerParser extends Parser {
             out.space();
             joinCondition.write(out);
         }
+    }
+
+    @Override
+    public void validateOffset(SelectQuery selectQuery) {
+        if (!selectQuery.hasOrder()) {
+            throw new OrderByNeededException("Offset is only allowed with order by");
+        }
+
     }
 
 }
