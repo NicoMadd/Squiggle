@@ -70,6 +70,7 @@ public class LeftJoinColumnTest {
         public void leftJoinToTableWithAlias() {
                 SelectQuery select = Squiggle.Select().from("tableA", "tba").select("columnA1")
                                 .leftJoin("columnA1", join -> join.to("tableB", "tbb").on("columnB1"))
+                                .useTable(0)
                                 .leftJoin("columnA1", join -> join.to("tableC", "tbc").on("columnC1"));
 
                 assertEquals("SELECT tba.columnA1 FROM tableA tba LEFT JOIN tableB tbb ON tba.columnA1 = tbb.columnB1 LEFT JOIN tableC tbc ON tba.columnA1 = tbc.columnC1",
@@ -124,9 +125,9 @@ public class LeftJoinColumnTest {
 
         @Test
         public void leftJoinFromOneTableToTwoDifferentTables() {
-                SelectQuery select = Squiggle.Select().from("tableA")
-                                .select("column1").leftJoin("columnA1",
-                                                join -> join.to("tableB").on("columnB1"))
+                SelectQuery select = Squiggle.Select().from("tableA").select("column1")
+                                .leftJoin("columnA1", join -> join.to("tableB").on("columnB1"))
+                                .useTable("tableA")
                                 .leftJoin("columnA2", join -> join.to("tableC").on("columnC1"));
 
                 assertEquals("SELECT tableA.column1 FROM tableA LEFT JOIN tableB ON tableA.columnA1 = tableB.columnB1 LEFT JOIN tableC ON tableA.columnA2 = tableC.columnC1",

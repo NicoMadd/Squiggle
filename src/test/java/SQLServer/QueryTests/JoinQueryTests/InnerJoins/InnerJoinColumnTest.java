@@ -70,6 +70,7 @@ public class InnerJoinColumnTest {
         public void innerJoinToTableWithAlias() {
                 SelectQuery select = Squiggle.Select().from("tableA", "tba").select("columnA1")
                                 .join("columnA1", join -> join.to("tableB", "tbb").on("columnB1"))
+                                .useTable(0)
                                 .join("columnA1", join -> join.to("tableC", "tbc").on("columnC1"));
 
                 assertEquals("SELECT tba.columnA1 FROM tableA tba INNER JOIN tableB tbb ON tba.columnA1 = tbb.columnB1 INNER JOIN tableC tbc ON tba.columnA1 = tbc.columnC1",
@@ -124,9 +125,9 @@ public class InnerJoinColumnTest {
 
         @Test
         public void innerJoinFromOneTableToTwoDifferentTables() {
-                SelectQuery select = Squiggle.Select().from("tableA")
-                                .select("column1").innerJoin("columnA1",
-                                                join -> join.to("tableB").on("columnB1"))
+                SelectQuery select = Squiggle.Select().from("tableA").select("column1")
+                                .innerJoin("columnA1", join -> join.to("tableB").on("columnB1"))
+                                .useTable(0)
                                 .join("columnA2", join -> join.to("tableC").on("columnC1"));
 
                 assertEquals("SELECT tableA.column1 FROM tableA INNER JOIN tableB ON tableA.columnA1 = tableB.columnB1 INNER JOIN tableC ON tableA.columnA2 = tableC.columnC1",

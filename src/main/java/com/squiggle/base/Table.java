@@ -80,4 +80,8 @@ public class Table extends Parserable {
         return ToStringer.toString(this);
     }
 
+    public Boolean matches(String nameOrAlias) {
+        return nameOrAlias.equals(getName()) || nameOrAlias.equals(getAlias());
+    }
+
 }

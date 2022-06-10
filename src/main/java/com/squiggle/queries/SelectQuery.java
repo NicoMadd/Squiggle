@@ -41,6 +41,7 @@ public class SelectQuery extends Query {
     protected List<Column> groupBys;
     protected Integer limit;
     protected Integer offset;
+    protected Table actualTable;
 
     public SelectQuery() {
         super();
@@ -49,22 +50,26 @@ public class SelectQuery extends Query {
         this.order = new HashSet<>();
         this.joins = new LinkedList<>();
         this.groupBys = new LinkedList<>();
+        this.actualTable = null;
 
     }
 
+    public Table getActualTable() {
+        return this.actualTable;
+    }
+
     public SelectQuery from(Table table) {
-        this.baseTable = table;
+        this.baseTable = this.baseTable == null ? table : this.baseTable;
+        this.actualTable = table;
         return this;
     }
 
     public SelectQuery from(String tableName, String alias) {
-        this.baseTable = new Table(tableName, alias);
-        return this;
+        return this.from(new Table(tableName, alias));
     }
 
     public SelectQuery from(String tableName) {
-        this.baseTable = new Table(tableName);
-        return this;
+        return this.from(new Table(tableName));
     }
 
     public Table getBaseTable() {
@@ -78,17 +83,17 @@ public class SelectQuery extends Query {
 
     public SelectQuery select(String columnName) {
         validate();
-        return this.select(this.baseTable.getColumn(columnName));
+        return this.select(getActualTable().getColumn(columnName));
     }
 
     public SelectQuery select(String columnName, String alias) {
         validate();
-        return this.select(this.baseTable.getColumn(columnName, alias));
+        return this.select(getActualTable().getColumn(columnName, alias));
 
     }
 
     public SelectQuery sum(String columName) {
-        return this.select(this.baseTable.getAggregatedColumn(columName, new Sum()));
+        return this.select(getActualTable().getAggregatedColumn(columName, new Sum()));
     }
 
     public SelectQuery avg(String columName) {
@@ -97,16 +102,16 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery average(String columName) {
-        return this.select(this.baseTable.getAggregatedColumn(columName, new Average()));
+        return this.select(getActualTable().getAggregatedColumn(columName, new Average()));
 
     }
 
     public SelectQuery count(String columName) {
-        return this.select(this.baseTable.getAggregatedColumn(columName, new Count()));
+        return this.select(getActualTable().getAggregatedColumn(columName, new Count()));
     }
 
     public SelectQuery sum(String columName, String alias) {
-        return this.select(this.baseTable.getAggregatedColumn(columName, alias, new Sum()));
+        return this.select(getActualTable().getAggregatedColumn(columName, alias, new Sum()));
     }
 
     public SelectQuery avg(String columName, String alias) {
@@ -114,12 +119,12 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery average(String columName, String alias) {
-        return this.select(this.baseTable.getAggregatedColumn(columName, alias, new Average()));
+        return this.select(getActualTable().getAggregatedColumn(columName, alias, new Average()));
 
     }
 
     public SelectQuery count(String columName, String alias) {
-        return this.select(this.baseTable.getAggregatedColumn(columName, alias, new Count()));
+        return this.select(getActualTable().getAggregatedColumn(columName, alias, new Count()));
     }
 
     public void validate() {
@@ -158,7 +163,7 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery where(String columnName, Function<CriteriaBuilder, CriteriaBuilder> condition) {
-        CriteriaBuilder criteriaBuilder = new CriteriaBuilder(new Column(this.baseTable, columnName));
+        CriteriaBuilder criteriaBuilder = new CriteriaBuilder(new Column(getActualTable(), columnName));
         return condition.apply(criteriaBuilder).build().getClass() == NoCriteria.class ? this
                 : this.addCriteria(condition.apply(criteriaBuilder).build());
     }
@@ -175,12 +180,12 @@ public class SelectQuery extends Query {
 
     public SelectQuery groupBy(String columnName) {
         validate();
-        return this.groupBy(this.baseTable.getColumn(columnName));
+        return this.groupBy(getActualTable().getColumn(columnName));
     }
 
     public SelectQuery groupBy(String columnName, String alias) {
         validate();
-        return this.groupBy(this.baseTable.getColumn(columnName, alias));
+        return this.groupBy(getActualTable().getColumn(columnName, alias));
 
     }
 
@@ -189,8 +194,12 @@ public class SelectQuery extends Query {
         return this;
     }
 
-    public SelectQuery order(String columnName, Boolean orderDirection) {
-        Order order = new Order(new Column(this.baseTable, columnName), orderDirection);
+    public SelectQuery order(String columnName) {
+        return this.order(columnName, true);
+    }
+
+    public SelectQuery order(String columnName, Boolean ascending) {
+        Order order = new Order(new Column(getActualTable(), columnName), ascending);
         this.order.add(order);
         return this;
     }
@@ -217,6 +226,10 @@ public class SelectQuery extends Query {
         return order;
     }
 
+    public Boolean hasOrder() {
+        return !order.isEmpty();
+    }
+
     public List<Column> listGroupBys() {
         return groupBys;
     }
@@ -230,8 +243,7 @@ public class SelectQuery extends Query {
      *
      * @return List of {@link com.squiggle.base.systech.Squiggle.Table}s
      */
-    @Override
-    public List<Table> getUsedTables() {
+    public List<Table> getUsedTables(Boolean includeJoins) {
 
         LinkedHashSet<Table> allTables = new LinkedHashSet<>();
         allTables.add(this.getBaseTable());
@@ -249,8 +261,16 @@ public class SelectQuery extends Query {
         for (Criteria criteria : this.listCriteria()) {
             if (criteria instanceof JoinCriteria) {
                 JoinCriteria joinCriteria = (JoinCriteria) criteria;
-                allTables.add(joinCriteria.getSource().getTable());
-                allTables.add(joinCriteria.getDest().getTable());
+                if (joinCriteria.getSource() != null)
+                    allTables.add(joinCriteria.getSource().getTable());
+                if (joinCriteria.getDest() != null)
+                    allTables.add(joinCriteria.getDest().getTable());
+            }
+        }
+
+        if (includeJoins) {
+            for (JoinCriteria join : this.getJoins()) {
+                allTables.add(join.getJoinCondition().getTable());
             }
         }
 
@@ -258,8 +278,12 @@ public class SelectQuery extends Query {
             allTables.add(order.getColumn().getTable());
         }
         LinkedList<Table> linkedList = new LinkedList<>(allTables);
-        Collections.reverse(linkedList);
+        // Collections.reverse(linkedList);
         return linkedList;
+    }
+
+    public List<Table> getUsedTables() {
+        return getUsedTables(false);
     }
 
     public List<JoinCriteria> getJoins() {
@@ -300,22 +324,23 @@ public class SelectQuery extends Query {
 
     public SelectQuery leftJoin(String srcColumnname, String destTable, String destColumnname) {
         Table dstTable = new Table(destTable);
-        return addJoin(new LeftJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new LeftJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery leftJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
         Table dstTable = new Table(destTable, tableAlias);
-        return addJoin(new LeftJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new LeftJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery leftJoin(String srcColumnName,
             Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
         JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
-                .from(this.baseTable.getColumn(srcColumnName));
+                .from(getActualTable().getColumn(srcColumnName));
         JoinCondition join = condition.apply(joinConditionBuilder).build();
-        return addJoin(new LeftJoin(this.baseTable.getColumn(srcColumnName), join));
+        Table dstTable = join.getTable();
+        return addJoin(new LeftJoin(getActualTable().getColumn(srcColumnName), join)).from(dstTable);
     }
 
     public SelectQuery rightJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
@@ -325,22 +350,23 @@ public class SelectQuery extends Query {
 
     public SelectQuery rightJoin(String srcColumnname, String destTable, String destColumnname) {
         Table dstTable = new Table(destTable);
-        return addJoin(new RightJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new RightJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery rightJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
         Table dstTable = new Table(destTable, tableAlias);
-        return addJoin(new RightJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new RightJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery rightJoin(String srcColumnName,
             Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
         JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
-                .from(this.baseTable.getColumn(srcColumnName));
+                .from(getActualTable().getColumn(srcColumnName));
         JoinCondition join = condition.apply(joinConditionBuilder).build();
-        return addJoin(new RightJoin(this.baseTable.getColumn(srcColumnName), join));
+        Table dstTable = join.getTable();
+        return addJoin(new RightJoin(getActualTable().getColumn(srcColumnName), join)).from(dstTable);
     }
 
     public SelectQuery outerJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
@@ -350,22 +376,23 @@ public class SelectQuery extends Query {
 
     public SelectQuery outerJoin(String srcColumnname, String destTable, String destColumnname) {
         Table dstTable = new Table(destTable);
-        return addJoin(new OuterJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new OuterJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery outerJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
         Table dstTable = new Table(destTable, tableAlias);
-        return addJoin(new OuterJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new OuterJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery outerJoin(String srcColumnName,
             Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
         JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
-                .from(this.baseTable.getColumn(srcColumnName));
+                .from(getActualTable().getColumn(srcColumnName));
         JoinCondition join = condition.apply(joinConditionBuilder).build();
-        return addJoin(new OuterJoin(this.baseTable.getColumn(srcColumnName), join));
+        Table dstTable = join.getTable();
+        return addJoin(new OuterJoin(getActualTable().getColumn(srcColumnName), join)).from(dstTable);
     }
 
     public SelectQuery innerJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
@@ -375,22 +402,23 @@ public class SelectQuery extends Query {
 
     public SelectQuery innerJoin(String srcColumnname, String destTable, String destColumnname) {
         Table dstTable = new Table(destTable);
-        return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new InnerJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery innerJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
         Table dstTable = new Table(destTable, tableAlias);
-        return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new InnerJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery innerJoin(String srcColumnName,
             Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
         JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
-                .from(this.baseTable.getColumn(srcColumnName));
+                .from(getActualTable().getColumn(srcColumnName));
         JoinCondition join = condition.apply(joinConditionBuilder).build();
-        return addJoin(new InnerJoin(this.baseTable.getColumn(srcColumnName), join));
+        Table dstTable = join.getTable();
+        return addJoin(new InnerJoin(getActualTable().getColumn(srcColumnName), join)).from(dstTable);
     }
 
     public SelectQuery fullJoin(Table srcTable, String srcColumnname, Table destTable, String destColumnname) {
@@ -400,22 +428,23 @@ public class SelectQuery extends Query {
 
     public SelectQuery fullJoin(String srcColumnname, String destTable, String destColumnname) {
         Table dstTable = new Table(destTable);
-        return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new FullJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery fullJoin(String srcColumnname, String destTable, String tableAlias, String destColumnname) {
         Table dstTable = new Table(destTable, tableAlias);
-        return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
+        return addJoin(new FullJoin(getActualTable().getColumn(srcColumnname), dstTable.getColumn(destColumnname)))
                 .from(dstTable);
     }
 
     public SelectQuery fullJoin(String srcColumnName,
             Function<JoinConditionBuilder, JoinConditionBuilder> condition) {
         JoinConditionBuilder joinConditionBuilder = new JoinConditionBuilder()
-                .from(this.baseTable.getColumn(srcColumnName));
+                .from(getActualTable().getColumn(srcColumnName));
         JoinCondition join = condition.apply(joinConditionBuilder).build();
-        return addJoin(new FullJoin(this.baseTable.getColumn(srcColumnName), join));
+        Table dstTable = join.getTable();
+        return addJoin(new FullJoin(getActualTable().getColumn(srcColumnName), join)).from(dstTable);
     }
 
     /*
@@ -437,6 +466,16 @@ public class SelectQuery extends Query {
         return this;
     }
 
+    public SelectQuery useTable(String nameOrAlias) {
+        Table selectedTable = getUsedTables(true).stream().filter(t -> t.matches(nameOrAlias)).findFirst().get();
+        return this.from(selectedTable);
+    }
+
+    public SelectQuery useTable(Integer tableIndex) {
+        Table selectedTable = getUsedTables().get(tableIndex);
+        return this.from(selectedTable);
+    }
+
     public SelectQuery limit(int i) {
         this.limit = i;
         return this;
@@ -451,12 +490,17 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery offset(int i) {
+        validateOffset();
         this.offset = i;
         return this;
     }
 
+    protected void validateOffset() {
+        this.parser.validateOffset(this);
+    }
+
     public Boolean withOffset() {
-        return this.offset > 0;
+        return this.offset >= 0;
     }
 
     public Integer getOffset() {

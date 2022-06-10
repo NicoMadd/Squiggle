@@ -8,6 +8,7 @@ import java.util.Random;
 import com.squiggle.Squiggle;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
+import com.squiggle.parsers.OrderByNeededException;
 import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.SelectQuery;
 import com.squiggle.types.values.BooleanTypeValue;
@@ -141,18 +142,29 @@ public class SelectQueryTest {
     }
 
     @Test
+    public void selectWithOffsetError() {
+        Integer offset = new Random().nextInt(100);
+        SelectQuery select = Squiggle.Select().from("table").select("*");
+        Exception thrown = assertThrows(OrderByNeededException.class, () -> select.offset(offset).toString());
+        assertTrue(thrown.getMessage().contains("Offset is only allowed with order by"));
+    }
+
+    @Test
     public void selectWithOffset() {
         Integer offset = new Random().nextInt(100);
-        SelectQuery select = Squiggle.Select().from("table").select("*").offset(offset);
-        assertEquals("SELECT table.* FROM table OFFSET " + offset, select.toString());
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1", true).offset(offset);
+        assertEquals("SELECT table.* FROM table ORDER BY table.col1 OFFSET " + offset, select.toString());
     }
 
     @Test
     public void selectWithLimitAndOffset() {
-        Integer limit = new Random().nextInt(100);
-        Integer offset = new Random().nextInt(100);
-        SelectQuery select = Squiggle.Select().from("table").select("*").limit(limit).offset(offset);
-        assertEquals("SELECT TOP " + limit + " table.* FROM table OFFSET " + offset, select.toString());
+        Integer limit = new Random().nextInt(10000);
+        Integer offset = new Random().nextInt(10000);
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1").limit(limit).offset(offset);
+        assertEquals(
+                "SELECT table.* FROM table ORDER BY table.col1 OFFSET " + offset + " ROWS FETCH NEXT " + limit
+                        + " ROWS ONLY",
+                select.toString());
     }
 
     @AfterAll

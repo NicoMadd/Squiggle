@@ -73,6 +73,7 @@ public class JoinConditionTest {
                                                 .is(val2)
                                                 .and("colB3")
                                                 .is("value1").and("colB4").is("value4"))
+                                .useTable(0)
                                 .join("colA1",
                                                 join -> join.to("tableC", "tbC").on("colC1").switchTable()
                                                                 .and("colC2").is(val2bis)
@@ -84,6 +85,31 @@ public class JoinConditionTest {
                                 + val2bis + " AND tbC.colC3 = 'value1' AND tbC.colC4 = 'value4'",
                                 select.toString());
 
+        }
+
+        @Test
+        public void ThreeJoinsFromOneTableSelectFromAll() {
+
+                SelectQuery select = Squiggle.Select().from("WF_TASKS", "wft").select("*")
+                                .leftJoin("COD_USUARIO_ASIGNADO",
+                                                join -> join.to("TB_SEGU_USUARIOS", "tba").on("COD_USUARIO"))
+                                .select("NOM_USUARIO", "ASIGNADO").useTable("wft")
+                                .leftJoin("COD_USUARIO_TRATANTE",
+                                                join -> join.to("TB_SEGU_USUARIOS", "tbt").on("COD_USUARIO"))
+                                .select("NOM_USUARIO", "TRATANTE").useTable("wft")
+                                .leftJoin("COD_USUARIO_GESTOR",
+                                                join -> join.to("TB_SEGU_USUARIOS", "tbg").on("COD_USUARIO"))
+                                .select("NOM_USUARIO", "GESTOR").useTable("wft")
+                                .where("IDWFINS", col -> col.equals("1MF2TZ7TUQ"));
+
+                assertEquals("SELECT wft.*, tba.NOM_USUARIO AS ASIGNADO, tbt.NOM_USUARIO AS TRATANTE, tbg.NOM_USUARIO AS GESTOR FROM WF_TASKS wft "
+                                +
+                                "LEFT JOIN TB_SEGU_USUARIOS tba ON wft.COD_USUARIO_ASIGNADO = tba.COD_USUARIO "
+                                +
+                                "LEFT JOIN TB_SEGU_USUARIOS tbt ON wft.COD_USUARIO_TRATANTE = tbt.COD_USUARIO "
+                                +
+                                "LEFT JOIN TB_SEGU_USUARIOS tbg ON wft.COD_USUARIO_GESTOR = tbg.COD_USUARIO WHERE wft.IDWFINS = '1MF2TZ7TUQ'",
+                                select.toString());
         }
 
         @AfterAll

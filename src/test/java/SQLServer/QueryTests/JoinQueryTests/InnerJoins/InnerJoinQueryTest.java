@@ -23,6 +23,7 @@ public class InnerJoinQueryTest {
         public void innerJoinWithLeftJoinSameTable() {
                 SelectQuery select = Squiggle.Select().from("table1").select("column1")
                                 .join("column1", join -> join.to("table2").on("column2"))
+                                .useTable(0)
                                 .leftJoin("column2", join -> join.to("table3").on("column3"));
                 assertEquals("SELECT table1.column1 FROM table1 INNER JOIN table2 ON table1.column1 = table2.column2 LEFT JOIN table3 ON table1.column2 = table3.column3",
                                 select.toString());
