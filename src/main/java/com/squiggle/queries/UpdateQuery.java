@@ -118,13 +118,8 @@ public class UpdateQuery extends Query {
         }
     }
 
-    @Override
-    public List<Table> getUsedTables() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public Collection<Entry<? extends Parserable, ? extends Outputable>> getEntries() {
         return this.values.entrySet().stream().collect(Collectors.toList());
     }
+
 }

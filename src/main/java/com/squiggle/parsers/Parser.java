@@ -122,4 +122,6 @@ public abstract class Parser {
 
     public abstract void join(Output out, JoinCriteria joinCriteria);
 
+    public abstract void validateOffset(SelectQuery selectQuery);
+
 }

@@ -24,12 +24,6 @@ public class DeleteQuery extends Query {
         this.parser.deleteQuery(out, this);
     }
 
-    @Override
-    public List<Table> getUsedTables() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public void validate() {
         // TODO Auto-generated method stub
 

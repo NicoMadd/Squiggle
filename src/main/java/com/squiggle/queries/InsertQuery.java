@@ -159,36 +159,4 @@ public class InsertQuery extends Query {
         this.parser.insertQuery(this, out);
     }
 
-    /**
-     * Find all the tables used in the query (from columns).
-     *
-     * @return List of {@link com.squiggle.Squiggle.Table}s
-     */
-
-    @Override
-    public List<Table> getUsedTables() {
-        LinkedHashSet<Table> allTables = new LinkedHashSet<>();
-        allTables.add(this.getBaseTable());
-
-        for (Column column : this.listColumns()) {
-            allTables.add(column.getTable());
-        }
-
-        // Get all tables used by criteria TODO capaz convendria separar los criteria.
-        // una collection para Joins y una para Matchs. Esto es bueno? si hay mas tipos
-        // que onda?
-        // cambio a comprobar la clase. :( no se si es mejor hacer un metodo por cada
-        // tipo
-
-        for (Criteria criteria : this.listCriteria()) {
-            if (criteria instanceof JoinCriteria) {
-                JoinCriteria joinCriteria = (JoinCriteria) criteria;
-                allTables.add(joinCriteria.getSource().getTable());
-                allTables.add(joinCriteria.getDest().getTable());
-            }
-        }
-
-        return new LinkedList<>(allTables);
-    }
-
 }
