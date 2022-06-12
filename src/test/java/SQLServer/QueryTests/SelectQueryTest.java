@@ -167,6 +167,46 @@ public class SelectQueryTest {
                 select.toString());
     }
 
+    @Test
+    public void selectWithOneAscOrder() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1", true);
+        assertEquals("SELECT table.* FROM table ORDER BY table.col1", select.toString());
+    }
+
+    @Test
+    public void selectWithOneDescOrder() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1", false);
+        assertEquals("SELECT table.* FROM table ORDER BY table.col1 DESC", select.toString());
+    }
+
+    @Test
+    public void selectWithTwoOrders() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1", true).order("col2", false);
+        assertEquals("SELECT table.* FROM table ORDER BY table.col1, table.col2 DESC", select.toString());
+    }
+
+    @Test
+    public void selectWithOrderWithIndexError() {
+        String query = Squiggle.Select().from("table").select("column")
+                .order(1).order(2, false).order("col3", false)
+                .toString();
+        assertEquals(query, "SELECT table.column FROM table ORDER BY 1, 2 DESC, table.col3 DESC");
+    }
+
+    @Test
+    public void selectWithOrderZeroIndexError() {
+        SelectQuery select = Squiggle.Select().from("table").select("column").select("column2");
+        Throwable throwable = assertThrows(IllegalArgumentException.class, () -> select.order(0));
+        assertTrue(throwable.getMessage().contains("Index must be greater than 0"));
+
+    }
+
+    @Test
+    public void selectWithOrderWithIndex() {
+        SelectQuery select = Squiggle.Select().from("table").select("column").select("column2").order(1);
+        assertEquals("SELECT table.column, table.column2 FROM table ORDER BY 1", select.toString());
+    }
+
     @AfterAll
     public static void tearDown() {
         Squiggle.setParser(null);

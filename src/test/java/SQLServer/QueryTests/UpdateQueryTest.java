@@ -76,6 +76,39 @@ public class UpdateQueryTest {
         assertEquals("UPDATE table SET table.\"column with spaces\"='value'", update.toString());
     }
 
+    @Test
+    public void updateWithTwoConditions() {
+        UpdateQuery update = Squiggle.Update().table("table").set("column").to("value")
+                .where("whereColumn", c -> c.equals(1))
+                .where("whereColumn2", c -> c.equals(2));
+        assertEquals("UPDATE table SET table.column='value' WHERE table.whereColumn = 1 AND table.whereColumn2 = 2",
+                update.toString());
+    }
+
+    @Test
+    public void updateWithMultipleConditions() {
+        UpdateQuery update = Squiggle.Update().table("table").set("column").to("value")
+                .where("whereColumn", c -> c.equals(1))
+                .where("whereColumn2", c -> c.equals("2"))
+                .where("whereColumn3", c -> c.equals(3f));
+        assertEquals(
+                "UPDATE table SET table.column='value' WHERE table.whereColumn = 1 AND table.whereColumn2 = '2' AND table.whereColumn3 = 3",
+                update.toString());
+    }
+
+    // TODO refactor where clause to new Logic Implementation
+    // @Test
+    // public void updateWithMultipleConditionsSingleWhere() {
+    // UpdateQuery update =
+    // Squiggle.Update().table("table").set("column").to("value")
+    // .where("column2", c ->
+    // c.equals(1).and("column3").less(2).and("column4").greater(3));
+    // assertEquals(
+    // "UPDATE table SET table.column='value' WHERE table.column2 = 1 AND
+    // table.column3 < 2 AND table.column4 > 3",
+    // update.toString());
+    // }
+
     @AfterAll
     public static void tearDown() {
         Squiggle.setParser(null);

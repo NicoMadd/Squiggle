@@ -36,7 +36,7 @@ import com.squiggle.output.Output;
 public class SelectQuery extends Query {
 
     protected boolean isDistinct = false;
-    protected Set<Order> order;
+    protected List<Order> orders;
     protected List<JoinCriteria> joins;
     protected List<Column> groupBys;
     protected Integer limit;
@@ -47,7 +47,7 @@ public class SelectQuery extends Query {
         super();
         this.limit = -1;
         this.offset = -1;
-        this.order = new HashSet<>();
+        this.orders = new LinkedList<>();
         this.joins = new LinkedList<>();
         this.groupBys = new LinkedList<>();
         this.actualTable = null;
@@ -190,7 +190,7 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery order(Order order) {
-        this.order.add(order);
+        this.orders.add(order);
         return this;
     }
 
@@ -199,15 +199,15 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery order(String columnName, Boolean ascending) {
-        Order order = new Order(new Column(getActualTable(), columnName), ascending);
-        this.order.add(order);
-        return this;
+        Order order = new Order(getActualTable().getColumn(columnName), ascending);
+        return this.order(order);
+
     }
 
     public SelectQuery order(String columnName, String tableName, Boolean orderDirection) {
-        Order order = new Order(new Column(new Table(tableName), columnName), orderDirection);
-        this.order.add(order);
-        return this;
+        Order order = new Order(new Table(tableName).getColumn(columnName), orderDirection);
+        return this.order(order);
+
     }
 
     /**
@@ -217,17 +217,26 @@ public class SelectQuery extends Query {
         return SelectQuery.this.order(new Order(table.getColumn(columnname), ascending));
     }
 
+    public SelectQuery order(Integer column) {
+        return this.order(column, true);
+    }
+
+    public SelectQuery order(Integer columnIndex, Boolean ascending) {
+        return this.order(new Order(columnIndex, ascending));
+    }
+
     public SelectQuery removeOrder(Order order) {
-        this.order.remove(order);
+        this.orders.remove(order);
         return this;
     }
 
-    public Set<Order> listOrder() {
-        return order;
+    public List<Order> listOrder() {
+        // Collections.reverse(order);
+        return orders;
     }
 
     public Boolean hasOrder() {
-        return !order.isEmpty();
+        return !orders.isEmpty();
     }
 
     public List<Column> listGroupBys() {
@@ -274,9 +283,12 @@ public class SelectQuery extends Query {
             }
         }
 
-        for (Order order : this.listOrder()) {
-            allTables.add(order.getColumn().getTable());
-        }
+        // Order columns depends on the ones been added previously. Theres no need to
+        // add them again.
+
+        // for (Order order : this.listOrder()) {
+        // allTables.add(order.getColumn().getTable());
+        // }
         LinkedList<Table> linkedList = new LinkedList<>(allTables);
         // Collections.reverse(linkedList);
         return linkedList;
@@ -454,6 +466,9 @@ public class SelectQuery extends Query {
      * but it would break the whole parser. Maybe take into account for future
      * implementations.
      * 
+     * 
+     * Solution made. Get all tables and search by the ones being used if any
+     * exists, else throw exception.
      */
 
     private JoinCriteria getLastJoinCriteria() {
@@ -467,7 +482,8 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery useTable(String nameOrAlias) {
-        Table selectedTable = getUsedTables(true).stream().filter(t -> t.matches(nameOrAlias)).findFirst().get();
+        Table selectedTable = getUsedTables(true).stream().filter(t -> t.matches(nameOrAlias)).findFirst()
+                .orElseThrow(() -> new NoTableException("No table found with name or alias: " + nameOrAlias));
         return this.from(selectedTable);
     }
 

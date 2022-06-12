@@ -189,14 +189,6 @@ public class SqlServerParser extends Parser {
                 out.print(", ");
         }
 
-        // Add criteria
-        if (insertQuery.listCriteria().size() > 0) {
-            out.print("WHERE");
-
-            appendList(out, insertQuery.listCriteria(), "AND");
-
-        }
-
     }
 
     @Override
@@ -224,7 +216,7 @@ public class SqlServerParser extends Parser {
             out.print("WHERE");
             out.space();
 
-            appendList(out, updateQuery.listCriteria(), "AND");
+            appendList(out, updateQuery.listCriteria(), " AND");
 
         }
     }
