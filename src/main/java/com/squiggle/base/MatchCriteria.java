@@ -12,6 +12,7 @@ import com.squiggle.types.values.BooleanTypeValue;
 import com.squiggle.types.values.FloatTypeValue;
 import com.squiggle.types.values.IntegerTypeValue;
 import com.squiggle.types.values.LongTypeValue;
+import com.squiggle.types.values.NullTypeValue;
 import com.squiggle.types.values.StringTypeValue;
 import com.squiggle.types.values.TypeValue;
 
@@ -33,6 +34,10 @@ public class MatchCriteria extends Criteria {
   public static final String LIKE = "LIKE";
 
   public static final String NOTEQUAL = "<>";
+
+  public static final String IS = "IS";
+
+  public static final String ISNOT = "IS NOT";
 
   private Column column;
 
@@ -102,6 +107,12 @@ public class MatchCriteria extends Criteria {
   public MatchCriteria(Column column, String matchType, Long value) {
     this.column = column;
     this.value = new LongTypeValue(value);
+    this.matchType = matchType;
+  }
+
+  public MatchCriteria(Column column, String matchType, NullTypeValue nullTypeValue) {
+    this.column = column;
+    this.value = nullTypeValue;
     this.matchType = matchType;
   }
 

@@ -129,6 +129,20 @@ public class SelectQueryTest {
     }
 
     @Test
+    public void whereIsNullValue() {
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.isNull());
+        assertEquals("SELECT table.* FROM table WHERE table.column IS NULL", select.toString());
+    }
+
+    @Test
+    public void whereIsNotNullValue() {
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.isNotNull());
+        assertEquals("SELECT table.* FROM table WHERE table.column IS NOT NULL", select.toString());
+    }
+
+    @Test
     public void selectWithColumnWithSpaces() {
         SelectQuery select = Squiggle.Select().from("table").select("Column 1", "alias");
         assertEquals("SELECT table.\"Column 1\" AS alias FROM table", select.toString());

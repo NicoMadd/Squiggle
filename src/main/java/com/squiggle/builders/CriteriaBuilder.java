@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import com.squiggle.base.*;
+import com.squiggle.types.values.NullTypeValue;
 
 /**
  *
@@ -134,6 +135,56 @@ public class CriteriaBuilder {
     public CriteriaBuilder equals(Long value) {
         this.matchType = MatchCriteria.EQUALS;
         return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder is(String value) {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder is(Float value) {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder is(Integer value) {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder is(Boolean value) {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder is(Date value) {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder is(BigDecimal value) {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder is(BigInteger value) {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder is(Long value) {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder isNull() {
+        this.matchType = MatchCriteria.IS;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, new NullTypeValue()));
+    }
+
+    public CriteriaBuilder isNotNull() {
+        this.matchType = MatchCriteria.ISNOT;
+        return this.addCriteria(new MatchCriteria(this.column, this.matchType, new NullTypeValue()));
     }
 
     public CriteriaBuilder greater(String value) {
