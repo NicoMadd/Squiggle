@@ -1,6 +1,7 @@
 package com.squiggle.builders;
 
 import com.squiggle.base.Column;
+import com.squiggle.base.Subquery;
 import com.squiggle.base.Table;
 import com.squiggle.base.Joins.JoinCondition;
 
@@ -31,6 +32,7 @@ public class JoinConditionBuilder {
     }
 
     private JoinConditionBuilder to(Table table) {
+        // System.out.println(table.toString());
         this.toTable = table;
         return this;
     }
@@ -94,4 +96,13 @@ public class JoinConditionBuilder {
     public JoinCondition build() {
         return new JoinCondition(this.logicBuilder, this.toTable);
     }
+
+    public JoinConditionBuilder toSub(String subquery) {
+        return to(new Subquery(subquery));
+    }
+
+    public JoinConditionBuilder toSub(String subquery, String alias) {
+        return to(new Subquery(subquery, alias));
+    }
+
 }

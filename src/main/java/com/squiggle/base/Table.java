@@ -84,4 +84,8 @@ public class Table extends Parserable {
         return nameOrAlias.equals(getName()) || nameOrAlias.equals(getAlias());
     }
 
+    public boolean needsQuotes() {
+        return false;
+    }
+
 }

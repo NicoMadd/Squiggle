@@ -496,7 +496,7 @@ public class SqlServerParser extends Parser {
 
         String name = table.getName();
 
-        if (name.contains(" ")) {
+        if (table.needsQuotes()) {
             out.print("\"");
             out.print(name);
             out.print("\"");
