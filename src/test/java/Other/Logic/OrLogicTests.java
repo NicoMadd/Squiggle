@@ -2,14 +2,11 @@ package Other.Logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.squiggle.Squiggle;
 import com.squiggle.builders.LogicBuilder;
-import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class OrLogicTests {
@@ -53,6 +50,7 @@ public class OrLogicTests {
 
     @Test
     public void simpleStringFloatOr() {
+        FloatTypeValue.setFormat("0.000000");
         LogicBuilder lg = new LogicBuilder().that("arg1").equals(1.0f).or(2.0f).equals(3.0f);
         assertEquals("'arg1' = 1.000000 OR 2.000000 = 3.000000", lg.toString());
     }

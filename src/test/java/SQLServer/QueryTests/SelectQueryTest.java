@@ -3,11 +3,15 @@ package SQLServer.QueryTests;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Random;
+
 import com.squiggle.Squiggle;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
+import com.squiggle.parsers.OrderByNeededException;
 import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.SelectQuery;
+import com.squiggle.types.values.BooleanTypeValue;
 
 public class SelectQueryTest {
 
@@ -89,14 +93,32 @@ public class SelectQueryTest {
 
     @Test
     public void simpleStringWhere() {
-        SelectQuery select = Squiggle.Select().from("table").select("*").where("column", c -> c.equals("value"));
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.equals("value"));
         assertEquals("SELECT table.* FROM table WHERE table.column = 'value'", select.toString());
     }
 
     @Test
     public void simpleIntWhere() {
-        SelectQuery select = Squiggle.Select().from("table").select("*").where("column", c -> c.equals(1));
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.equals(1));
         assertEquals("SELECT table.* FROM table WHERE table.column = 1", select.toString());
+    }
+
+    @Test
+    public void simpleBooleanWhereAsInt() {
+        BooleanTypeValue.asInt();
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.equals(true));
+        assertEquals("SELECT table.* FROM table WHERE table.column = 1", select.toString());
+    }
+
+    @Test
+    public void simpleBooleanWhereAsText() {
+        BooleanTypeValue.asText();
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.equals(true));
+        assertEquals("SELECT table.* FROM table WHERE table.column = true", select.toString());
     }
 
     @Test
@@ -107,9 +129,96 @@ public class SelectQueryTest {
     }
 
     @Test
+    public void whereIsNullValue() {
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.isNull());
+        assertEquals("SELECT table.* FROM table WHERE table.column IS NULL", select.toString());
+    }
+
+    @Test
+    public void whereIsNotNullValue() {
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.isNotNull());
+        assertEquals("SELECT table.* FROM table WHERE table.column IS NOT NULL", select.toString());
+    }
+
+    @Test
     public void selectWithColumnWithSpaces() {
         SelectQuery select = Squiggle.Select().from("table").select("Column 1", "alias");
         assertEquals("SELECT table.\"Column 1\" AS alias FROM table", select.toString());
+    }
+
+    @Test
+    public void selectWithLimit() {
+        Integer limit = new Random().nextInt(100);
+        SelectQuery select = Squiggle.Select().from("table").select("*").limit(limit);
+        assertEquals("SELECT TOP " + limit + " table.* FROM table", select.toString());
+    }
+
+    @Test
+    public void selectWithOffsetError() {
+        Integer offset = new Random().nextInt(100);
+        SelectQuery select = Squiggle.Select().from("table").select("*");
+        Exception thrown = assertThrows(OrderByNeededException.class, () -> select.offset(offset).toString());
+        assertTrue(thrown.getMessage().contains("Offset is only allowed with order by"));
+    }
+
+    @Test
+    public void selectWithOffset() {
+        Integer offset = new Random().nextInt(100);
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1", true).offset(offset);
+        assertEquals("SELECT table.* FROM table ORDER BY table.col1 OFFSET " + offset, select.toString());
+    }
+
+    @Test
+    public void selectWithLimitAndOffset() {
+        Integer limit = new Random().nextInt(10000);
+        Integer offset = new Random().nextInt(10000);
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1").limit(limit).offset(offset);
+        assertEquals(
+                "SELECT table.* FROM table ORDER BY table.col1 OFFSET " + offset + " ROWS FETCH NEXT " + limit
+                        + " ROWS ONLY",
+                select.toString());
+    }
+
+    @Test
+    public void selectWithOneAscOrder() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1", true);
+        assertEquals("SELECT table.* FROM table ORDER BY table.col1", select.toString());
+    }
+
+    @Test
+    public void selectWithOneDescOrder() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1", false);
+        assertEquals("SELECT table.* FROM table ORDER BY table.col1 DESC", select.toString());
+    }
+
+    @Test
+    public void selectWithTwoOrders() {
+        SelectQuery select = Squiggle.Select().from("table").select("*").order("col1", true).order("col2", false);
+        assertEquals("SELECT table.* FROM table ORDER BY table.col1, table.col2 DESC", select.toString());
+    }
+
+    @Test
+    public void selectWithOrderWithIndexError() {
+        String query = Squiggle.Select().from("table").select("column")
+                .order(1).order(2, false).order("col3", false)
+                .toString();
+        assertEquals(query, "SELECT table.column FROM table ORDER BY 1, 2 DESC, table.col3 DESC");
+    }
+
+    @Test
+    public void selectWithOrderZeroIndexError() {
+        SelectQuery select = Squiggle.Select().from("table").select("column").select("column2");
+        Throwable throwable = assertThrows(IllegalArgumentException.class, () -> select.order(0));
+        assertTrue(throwable.getMessage().contains("Index must be greater than 0"));
+
+    }
+
+    @Test
+    public void selectWithOrderWithIndex() {
+        SelectQuery select = Squiggle.Select().from("table").select("column").select("column2").order(1);
+        assertEquals("SELECT table.column, table.column2 FROM table ORDER BY 1", select.toString());
     }
 
     @AfterAll

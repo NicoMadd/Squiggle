@@ -36,45 +36,10 @@ import com.squiggle.queries.UpdateQuery;
 import com.squiggle.queries.TableQueries.CreateTableQuery;
 import com.squiggle.queries.TableQueries.DropTableQuery;
 import com.squiggle.types.values.TypeValue;
-import com.squiggle.utils.TriConsumer;
 
 public class SqlServerParser extends Parser {
 
     public SqlServerParser() {
-    }
-
-    /**
-     * Iterate through a Set and execute a function on each
-     * entry.
-     */
-    private void iterateEntryCollection(Output out, Collection<Entry<? extends Parserable, ? extends Outputable>> set,
-            TriConsumer<Output, Entry<? extends Parserable, ? extends Outputable>, Boolean> consumer) {
-        for (Iterator<Entry<? extends Parserable, ? extends Outputable>> i = set.iterator(); i.hasNext();)
-            consumer.accept(out, i.next(), i.hasNext());
-    }
-
-    /**
-     * Iterate through a Parserable Collection and execute a function on each
-     * entry.
-     */
-    private void iterateParserableCollection(Output out, Collection<? extends Parserable> parserables,
-            TriConsumer<Output, ? super Parserable, Boolean> consumer) {
-        for (Iterator<? extends Parserable> i = parserables.iterator(); i.hasNext();)
-            consumer.accept(out, i.next(), i.hasNext());
-    }
-
-    /**
-     * Iterate through a Collection and append all entries (using .toString()) to a
-     * StringBuffer.
-     */
-    private void appendList(Output out, Collection<? extends Parserable> parserables, String separator) {
-        this.iterateParserableCollection(out, parserables, (output, current, hasNext) -> {
-            current.write(out);
-            if (hasNext) {
-                out.print(separator);
-                out.space();
-            }
-        });
     }
 
     @Override
@@ -83,6 +48,9 @@ public class SqlServerParser extends Parser {
         out.print("SELECT");
         if (selectQuery.isDistinct()) {
             out.print(" DISTINCT");
+        }
+        if (selectQuery.withLimit() && !selectQuery.withOffset()) {
+            out.print(" TOP " + selectQuery.getLimit());
         }
 
         // Add columns to select
@@ -120,9 +88,19 @@ public class SqlServerParser extends Parser {
         if (selectQuery.listOrder().size() > 0) {
             out.space();
             out.print("ORDER BY");
+            out.space();
 
             appendList(out, selectQuery.listOrder(), ",");
+        }
 
+        // Add offset
+        if (selectQuery.withOffset()) {
+            out.space();
+            out.print("OFFSET " + selectQuery.getOffset());
+        }
+        if (selectQuery.withLimit() && selectQuery.withOffset()) {
+            out.space();
+            out.print("ROWS FETCH NEXT " + selectQuery.getLimit() + " ROWS ONLY");
         }
 
     }
@@ -211,14 +189,6 @@ public class SqlServerParser extends Parser {
                 out.print(", ");
         }
 
-        // Add criteria
-        if (insertQuery.listCriteria().size() > 0) {
-            out.print("WHERE");
-
-            appendList(out, insertQuery.listCriteria(), "AND");
-
-        }
-
     }
 
     @Override
@@ -246,7 +216,7 @@ public class SqlServerParser extends Parser {
             out.print("WHERE");
             out.space();
 
-            appendList(out, updateQuery.listCriteria(), "AND");
+            appendList(out, updateQuery.listCriteria(), " AND");
 
         }
     }
@@ -526,7 +496,7 @@ public class SqlServerParser extends Parser {
 
         String name = table.getName();
 
-        if (name.contains(" ")) {
+        if (table.needsQuotes()) {
             out.print("\"");
             out.print(name);
             out.print("\"");
@@ -573,6 +543,14 @@ public class SqlServerParser extends Parser {
             out.space();
             joinCondition.write(out);
         }
+    }
+
+    @Override
+    public void validateOffset(SelectQuery selectQuery) {
+        if (!selectQuery.hasOrder()) {
+            throw new OrderByNeededException("Offset is only allowed with order by");
+        }
+
     }
 
 }

@@ -2,13 +2,10 @@ package Other.Logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.squiggle.Squiggle;
 import com.squiggle.builders.LogicBuilder;
-import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class AndLogicTests {
@@ -34,13 +31,14 @@ public class AndLogicTests {
 
         @Test
         public void simpleBooleanBooleanAnd() {
+                BooleanTypeValue.asInt();
                 LogicBuilder lg = new LogicBuilder().that(true).equals(true).and(false).equals(false);
                 assertEquals("1 = 1 AND 0 = 0", lg.toString());
         }
 
         @Test
         public void simpleBooleanBooleanAsTextAnd() {
-                BooleanTypeValue.setAsText(true);
+                BooleanTypeValue.asText();
                 LogicBuilder lg = new LogicBuilder().that(true).equals(true).and(false).equals(false);
                 assertEquals("true = true AND false = false", lg.toString());
                 BooleanTypeValue.setAsText(false);
@@ -49,6 +47,7 @@ public class AndLogicTests {
 
         @Test
         public void simpleFloatFloatAnd() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals(1.0f).and(2.0f).equals(2.0f);
                 assertEquals("1.000000 = 1.000000 AND 2.000000 = 2.000000", lg.toString());
         }
@@ -74,6 +73,7 @@ public class AndLogicTests {
 
         @Test
         public void tripleBooleanAnd() {
+                BooleanTypeValue.asInt();
                 LogicBuilder lg = new LogicBuilder().that(true).equals(true).and(false).equals(false).and(true)
                                 .equals(true);
                 assertEquals("1 = 1 AND 0 = 0 AND 1 = 1", lg.toString());
@@ -90,6 +90,7 @@ public class AndLogicTests {
 
         @Test
         public void tripleFloatAnd() {
+                FloatTypeValue.setFormat("0.000000");
                 LogicBuilder lg = new LogicBuilder().that(1.0f).equals(1.0f).and(2.0f).equals(2.0f).and(3.0f)
                                 .equals(3.0f);
                 assertEquals("1.000000 = 1.000000 AND 2.000000 = 2.000000 AND 3.000000 = 3.000000", lg.toString());

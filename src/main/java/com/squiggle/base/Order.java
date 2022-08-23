@@ -16,6 +16,7 @@ public class Order extends Parserable {
     public static final boolean DESCENDING = false;
 
     private Column column;
+    private Integer index;
     private boolean ascending;
 
     /**
@@ -24,6 +25,13 @@ public class Order extends Parserable {
      */
     public Order(Column column, boolean ascending) {
         this.column = column;
+        this.ascending = ascending;
+    }
+
+    public Order(Integer column, boolean ascending) {
+        if (column <= 0)
+            throw new IllegalArgumentException("Index must be greater than 0");
+        this.index = column;
         this.ascending = ascending;
     }
 
@@ -36,7 +44,10 @@ public class Order extends Parserable {
     }
 
     public void write(Output out) {
-        column.write(out);
+        if (this.column != null)
+            column.write(out);
+        else
+            out.print(this.index);
         if (!ascending) {
             out.print(" DESC");
         }

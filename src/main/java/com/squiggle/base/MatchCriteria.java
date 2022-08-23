@@ -1,9 +1,20 @@
 package com.squiggle.base;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.squiggle.output.Output;
+import com.squiggle.types.values.BigDecimalTypeValue;
+import com.squiggle.types.values.BigIntegerTypeValue;
+import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
+import com.squiggle.types.values.IntegerTypeValue;
+import com.squiggle.types.values.LongTypeValue;
+import com.squiggle.types.values.NullTypeValue;
+import com.squiggle.types.values.StringTypeValue;
+import com.squiggle.types.values.TypeValue;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
@@ -24,17 +35,21 @@ public class MatchCriteria extends Criteria {
 
   public static final String NOTEQUAL = "<>";
 
+  public static final String IS = "IS";
+
+  public static final String ISNOT = "IS NOT";
+
   private Column column;
 
   private String matchType;
 
-  private String value;
+  private TypeValue value;
 
   private static String dateFormat = "yyyy-MM-dd HH:mm:ss.S";
 
   public MatchCriteria(Column column, String matchType, boolean value) {
     this.column = column;
-    this.value = String.valueOf(value);
+    this.value = new BooleanTypeValue(value);
     this.matchType = matchType;
   }
 
@@ -53,27 +68,51 @@ public class MatchCriteria extends Criteria {
     this(column, operator, getDateFormat().format(operand));
   }
 
-  public MatchCriteria(Column column, String matchType, float value) {
+  public MatchCriteria(Column column, String matchType, Float value) {
     this.column = column;
-    this.value = String.valueOf(value);
+    this.value = new FloatTypeValue(value);
     this.matchType = matchType;
   }
 
-  public MatchCriteria(Column column, String matchType, int value) {
+  public MatchCriteria(Column column, String matchType, Integer value) {
     this.column = column;
-    this.value = String.valueOf(value);
-    this.matchType = matchType;
-  }
-
-  public MatchCriteria(Column column, String matchType, String value) {
-    this.column = column;
-    this.value = quote(value);
+    this.value = new IntegerTypeValue(value);
     this.matchType = matchType;
   }
 
   public MatchCriteria(Column column, String matchType, String value, Boolean quote) {
     this.column = column;
-    this.value = quote ? quote(value) : value;
+    this.value = quote ? new StringTypeValue(value) : new StringTypeValue(value, false);
+    this.matchType = matchType;
+  }
+
+  public MatchCriteria(Column column, String matchType, BigDecimal value) {
+    this.column = column;
+    this.value = new BigDecimalTypeValue(value);
+    this.matchType = matchType;
+  }
+
+  public MatchCriteria(Column column, String matchType, BigInteger value) {
+    this.column = column;
+    this.value = new BigIntegerTypeValue(value);
+    this.matchType = matchType;
+  }
+
+  public MatchCriteria(Column column, String matchType, String value) {
+    this.column = column;
+    this.value = new StringTypeValue(value);
+    this.matchType = matchType;
+  }
+
+  public MatchCriteria(Column column, String matchType, Long value) {
+    this.column = column;
+    this.value = new LongTypeValue(value);
+    this.matchType = matchType;
+  }
+
+  public MatchCriteria(Column column, String matchType, NullTypeValue nullTypeValue) {
+    this.column = column;
+    this.value = nullTypeValue;
     this.matchType = matchType;
   }
 
@@ -116,7 +155,11 @@ public class MatchCriteria extends Criteria {
   }
 
   public void write(Output out) {
-    out.print(column).print(' ').print(matchType).print(' ').print(value);
+    out.print(column);
+    out.space();
+    out.print(matchType);
+    out.space();
+    value.write(out);
   }
 
   public static SimpleDateFormat getDateFormat() {

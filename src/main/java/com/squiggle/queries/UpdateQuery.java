@@ -91,8 +91,9 @@ public class UpdateQuery extends Query {
 
     public UpdateQuery where(String columnName, Function<CriteriaBuilder, CriteriaBuilder> condition) {
         CriteriaBuilder criteriaBuilder = new CriteriaBuilder(new Column(this.baseTable, columnName));
-        return condition.apply(criteriaBuilder).build().getClass() == NoCriteria.class ? this
-                : this.addCriteria(condition.apply(criteriaBuilder).build());
+        Criteria builtCondition = condition.apply(criteriaBuilder).build();
+        return builtCondition.getClass() == NoCriteria.class ? this
+                : this.addCriteria(builtCondition);
     }
 
     private UpdateQuery addCriteria(Criteria criteria) {
@@ -118,13 +119,8 @@ public class UpdateQuery extends Query {
         }
     }
 
-    @Override
-    public List<Table> getUsedTables() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public Collection<Entry<? extends Parserable, ? extends Outputable>> getEntries() {
         return this.values.entrySet().stream().collect(Collectors.toList());
     }
+
 }

@@ -14,6 +14,7 @@ import com.squiggle.types.values.FloatTypeValue;
 import com.squiggle.types.values.IntegerTypeValue;
 import com.squiggle.types.values.NullTypeValue;
 import com.squiggle.types.values.StringTypeValue;
+import com.squiggle.types.values.TypeValue;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
@@ -65,38 +66,44 @@ public class InsertQuery extends Query {
     }
 
     public InsertQuery value(String str) {
-        row.addValue(new StringTypeValue(str));
+        TypeValue value = str == null ? new NullTypeValue() : new StringTypeValue(str);
+        row.addValue(value);
         updateRowStatus();
         return this;
 
     }
 
     public InsertQuery value(Integer integer) {
-        row.addValue(new IntegerTypeValue(integer));
+        TypeValue value = integer == null ? new NullTypeValue() : new IntegerTypeValue(integer);
+        row.addValue(value);
         updateRowStatus();
         return this;
     }
 
     public InsertQuery value(Date date) {
-        row.addValue(new DateTypeValue(date));
+        TypeValue value = date == null ? new NullTypeValue() : new DateTypeValue(date);
+        row.addValue(value);
         updateRowStatus();
         return this;
     }
 
     public InsertQuery value(Double dbl) {
-        row.addValue(new DoubleTypeValue(dbl));
+        TypeValue value = dbl == null ? new NullTypeValue() : new DoubleTypeValue(dbl);
+        row.addValue(value);
         updateRowStatus();
         return this;
     }
 
     public InsertQuery value(Float flt) {
-        row.addValue(new FloatTypeValue(flt));
+        TypeValue value = flt == null ? new NullTypeValue() : new FloatTypeValue(flt);
+        row.addValue(value);
         updateRowStatus();
         return this;
     }
 
     public InsertQuery value(Boolean bool) {
-        row.addValue(new BooleanTypeValue(bool));
+        TypeValue value = bool == null ? new NullTypeValue() : new BooleanTypeValue(bool);
+        row.addValue(value);
         updateRowStatus();
         return this;
     }
@@ -150,38 +157,6 @@ public class InsertQuery extends Query {
     public void write(Output out) {
         validate();
         this.parser.insertQuery(this, out);
-    }
-
-    /**
-     * Find all the tables used in the query (from columns).
-     *
-     * @return List of {@link com.squiggle.Squiggle.Table}s
-     */
-
-    @Override
-    public List<Table> getUsedTables() {
-        LinkedHashSet<Table> allTables = new LinkedHashSet<>();
-        allTables.add(this.getBaseTable());
-
-        for (Column column : this.listColumns()) {
-            allTables.add(column.getTable());
-        }
-
-        // Get all tables used by criteria TODO capaz convendria separar los criteria.
-        // una collection para Joins y una para Matchs. Esto es bueno? si hay mas tipos
-        // que onda?
-        // cambio a comprobar la clase. :( no se si es mejor hacer un metodo por cada
-        // tipo
-
-        for (Criteria criteria : this.listCriteria()) {
-            if (criteria instanceof JoinCriteria) {
-                JoinCriteria joinCriteria = (JoinCriteria) criteria;
-                allTables.add(joinCriteria.getSource().getTable());
-                allTables.add(joinCriteria.getDest().getTable());
-            }
-        }
-
-        return new LinkedList<>(allTables);
     }
 
 }

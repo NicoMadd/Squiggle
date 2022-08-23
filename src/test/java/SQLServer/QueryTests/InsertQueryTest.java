@@ -10,12 +10,20 @@ import com.squiggle.exceptions.NoTableException;
 import com.squiggle.exceptions.NoValuesInsertedException;
 import com.squiggle.parsers.SqlServerParser;
 import com.squiggle.queries.InsertQuery;
+import com.squiggle.types.values.BooleanTypeValue;
+import com.squiggle.types.values.FloatTypeValue;
 
 public class InsertQueryTest {
 
         @BeforeAll
         public static void setUp() {
                 Squiggle.setParser(new SqlServerParser());
+        }
+
+        @BeforeEach
+        public void beforeEach() {
+                FloatTypeValue.defaultFormat();
+                BooleanTypeValue.asText();
         }
 
         @Test
@@ -84,9 +92,10 @@ public class InsertQueryTest {
 
         @Test
         public void floatInsert() {
+
                 InsertQuery insert = Squiggle.Insert().into("table").to("floatCol").value(3.0f);
                 assertEquals(
-                                "INSERT INTO table (floatCol) VALUES (3.000000)",
+                                "INSERT INTO table (floatCol) VALUES (3)",
                                 insert.toString());
         }
 
@@ -100,6 +109,7 @@ public class InsertQueryTest {
 
         @Test
         public void boolInsert() {
+                BooleanTypeValue.asInt();
                 InsertQuery insert = Squiggle.Insert().into("table").to("boolCol").value(true);
                 assertEquals(
                                 "INSERT INTO table (boolCol) VALUES (1)",
@@ -111,6 +121,17 @@ public class InsertQueryTest {
                 InsertQuery insert = Squiggle.Insert().into("table").to("column with spaces").value("value1");
                 assertEquals(
                                 "INSERT INTO table (\"column with spaces\") VALUES ('value1')",
+                                insert.toString());
+        }
+
+        @Test
+        public void insertNullValues() {
+                Integer nullInt = null;
+                String nullStr = null;
+                InsertQuery insert = Squiggle.Insert().into("table").to("column1").to("column2").value(nullInt)
+                                .value(nullStr);
+                assertEquals(
+                                "INSERT INTO table (column1, column2) VALUES (NULL, NULL)",
                                 insert.toString());
         }
 

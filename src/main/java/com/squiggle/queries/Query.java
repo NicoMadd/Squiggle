@@ -52,8 +52,6 @@ public abstract class Query extends Parserable implements Validatable, Transacta
         return Collections.unmodifiableList(columns);
     }
 
-    public abstract List<Table> getUsedTables();
-
     public List<Criteria> listCriteria() {
         return Collections.unmodifiableList(criteria);
     }
