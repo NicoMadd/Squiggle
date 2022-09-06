@@ -39,6 +39,8 @@ public class MatchCriteria extends Criteria {
 
   public static final String ISNOT = "IS NOT";
 
+  public static final String IN = "IN";
+
   private Column column;
 
   private String matchType;
@@ -159,7 +161,11 @@ public class MatchCriteria extends Criteria {
     out.space();
     out.print(matchType);
     out.space();
+    if (MatchCriteria.IN.equals(this.matchType))
+      out.print("(");
     value.write(out);
+    if (MatchCriteria.IN.equals(this.matchType))
+      out.print(")");
   }
 
   public static SimpleDateFormat getDateFormat() {

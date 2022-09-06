@@ -107,7 +107,7 @@ public class InCriteria extends Criteria {
 
     public void write(Output out) {
         out.print(column);
-        out.println(" IN (");
+        out.print(" IN (");
 
         if (subSelect != null) {
             subSelect.write(out);
@@ -115,7 +115,6 @@ public class InCriteria extends Criteria {
             out.print(value);
         }
 
-        out.println();
         out.print(")");
     }
 

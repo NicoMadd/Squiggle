@@ -143,6 +143,36 @@ public class SelectQueryTest {
     }
 
     @Test
+    public void whereInValueString() {
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.in("value1"));
+        assertEquals("SELECT table.* FROM table WHERE table.column IN ('value1')", select.toString());
+
+    }
+
+    @Test
+    public void whereInValuesIntegers() {
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.in(1, 2, 3));
+        assertEquals("SELECT table.* FROM table WHERE table.column IN (1,2,3)", select.toString());
+    }
+
+    @Test
+    public void whereInValueInteger() {
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.in(1));
+        assertEquals("SELECT table.* FROM table WHERE table.column IN (1)", select.toString());
+
+    }
+
+    @Test
+    public void whereInValuesStrings() {
+        SelectQuery select = Squiggle.Select().from("table").select("*")
+                .where("column", c -> c.in("value1", "value2", "value3"));
+        assertEquals("SELECT table.* FROM table WHERE table.column IN ('value1','value2','value3')", select.toString());
+    }
+
+    @Test
     public void selectWithColumnWithSpaces() {
         SelectQuery select = Squiggle.Select().from("table").select("Column 1", "alias");
         assertEquals("SELECT table.\"Column 1\" AS alias FROM table", select.toString());

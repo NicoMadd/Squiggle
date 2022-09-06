@@ -7,7 +7,10 @@ package com.squiggle.builders;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.squiggle.base.*;
 import com.squiggle.types.values.NullTypeValue;
@@ -440,6 +443,27 @@ public class CriteriaBuilder {
     public CriteriaBuilder notEqual(BigInteger value) {
         this.matchType = MatchCriteria.NOTEQUAL;
         return this.addCriteria(new MatchCriteria(this.column, this.matchType, value));
+    }
+
+    public CriteriaBuilder in(String first, String... rest) {
+        this.matchType = MatchCriteria.IN;
+        List<String> asList = new LinkedList<>();
+        asList.add(first);
+        for (String str : rest) {
+            asList.add(str);
+        }
+        return this.addCriteria(new InCriteria(this.column, asList.toArray(new String[asList.size()])));
+    }
+
+    public CriteriaBuilder in(Integer first, Integer... rest) {
+        this.matchType = MatchCriteria.IN;
+        int[] arr = new int[rest.length + 1];
+        arr[0] = first;
+        for (int i = 1; i < arr.length; i++) {
+            arr[i] = rest[i - 1];
+        }
+        return this.addCriteria(new InCriteria(this.column, arr));
+
     }
 
     public CriteriaBuilder link(String srcTable, String dstTable, String linkedColumn) {
