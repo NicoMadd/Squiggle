@@ -22,7 +22,7 @@ public class WhereConditionTest {
     }
 
     @Test
-    public void simpleAndCondition() {
+    public void simpleCondition() {
         SelectQuery select = Squiggle.Select().from("table").select("column1")
                 .where("column", col -> col.equals("value1"))
                 .where("column", col -> col.equals("value2"));
@@ -31,13 +31,23 @@ public class WhereConditionTest {
     }
 
     @Test
-    public void simpleOrCondition() {
+    public void simpleAndCondition() {
         SelectQuery select = Squiggle.Select().from("table").select("column1")
                 .where("column", col -> col.equals("value1"))
-                .or("column", col -> col.equals("value2"));
-        assertEquals("SELECT table.column1 FROM table WHERE table.column = 'value1' OR table.column = 'value2'",
+                .and("column", col -> col.equals("value2"));
+        assertEquals("SELECT table.column1 FROM table WHERE table.column = 'value1' AND table.column = 'value2'",
                 select.toString());
     }
+
+    // @Test
+    // public void simpleOrCondition() {
+    // SelectQuery select = Squiggle.Select().from("table").select("column1")
+    // .where("column", col -> col.equals("value1"))
+    // .or("column", col -> col.equals("value2"));
+    // assertEquals("SELECT table.column1 FROM table WHERE table.column = 'value1'
+    // OR table.column = 'value2'",
+    // select.toString());
+    // }
 
     @AfterAll
     public static void tearDown() {

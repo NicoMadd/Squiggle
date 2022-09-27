@@ -71,7 +71,14 @@ public class SqlServerParser extends Parser {
             out.print("WHERE");
             out.space();
 
-            appendList(out, selectQuery.listCriteria(), " AND");
+            this.iterateGenericCollection(out, selectQuery.listCriteria(), (output, current, hasNext) -> {
+                current.write(out);
+                if (hasNext) {
+                    out.space();
+                    out.print(current.getSeparator());
+                    out.space();
+                }
+            });
         }
 
         // Add group by

@@ -39,6 +39,18 @@ public abstract class Parser {
     /**
      * Iterate through a Set and execute a function on each
      * entry.
+     * 
+     * @param <T>
+     */
+    protected <T> void iterateGenericCollection(Output out, Collection<T> set,
+            TriConsumer<Output, T, Boolean> consumer) {
+        for (Iterator<T> i = set.iterator(); i.hasNext();)
+            consumer.accept(out, i.next(), i.hasNext());
+    }
+
+    /**
+     * Iterate through a Set and execute a function on each
+     * entry.
      */
     protected void iterateEntryCollection(Output out, Collection<Entry<? extends Parserable, ? extends Outputable>> set,
             TriConsumer<Output, Entry<? extends Parserable, ? extends Outputable>, Boolean> consumer) {

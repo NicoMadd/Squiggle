@@ -2,9 +2,8 @@ package com.squiggle.base;
 
 import com.squiggle.builders.LogicBuilder;
 import com.squiggle.output.Output;
-import com.squiggle.output.Outputable;
 
-public class WhereCondition implements Outputable {
+public class WhereCondition extends Criteria {
 
     LogicBuilder logic;
 

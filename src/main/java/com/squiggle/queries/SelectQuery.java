@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.squiggle.base.AND;
 import com.squiggle.base.Column;
 import com.squiggle.base.Criteria;
 import com.squiggle.base.NoCriteria;
@@ -22,6 +23,7 @@ import com.squiggle.base.Joins.OuterJoin;
 import com.squiggle.base.Joins.RightJoin;
 import com.squiggle.builders.CriteriaBuilder;
 import com.squiggle.builders.JoinConditionBuilder;
+import com.squiggle.builders.WhereConditionBuilder;
 import com.squiggle.exceptions.NoColumnsException;
 import com.squiggle.exceptions.NoTableException;
 import com.squiggle.functions.Average;
@@ -166,6 +168,15 @@ public class SelectQuery extends Query {
         CriteriaBuilder criteriaBuilder = new CriteriaBuilder(new Column(getActualTable(), columnName));
         return condition.apply(criteriaBuilder).build().getClass() == NoCriteria.class ? this
                 : this.addCriteria(condition.apply(criteriaBuilder).build());
+    }
+
+    public SelectQuery and(String columnName, Function<WhereConditionBuilder, WhereConditionBuilder> condition) {
+        WhereConditionBuilder builder = new WhereConditionBuilder(new Column(getActualTable(), columnName));
+        return this.addCriteria(new AND(condition.apply(builder).build()));
+    }
+
+    public SelectQuery or(String string, Object object) {
+        return null;
     }
 
     private SelectQuery addCriteria(Criteria criteria) {

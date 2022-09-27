@@ -1,9 +1,8 @@
 package com.squiggle.builders;
 
 import com.squiggle.base.Column;
-import com.squiggle.base.Subquery;
 import com.squiggle.base.Table;
-import com.squiggle.base.Joins.JoinCondition;
+import com.squiggle.base.WhereCondition;
 
 public class WhereConditionBuilder {
 
@@ -11,29 +10,17 @@ public class WhereConditionBuilder {
     private Table fromTable;
     private Table toTable;
     private Table actualTable;
+    private Column column;
 
-    public WhereConditionBuilder() {
+    public WhereConditionBuilder(Column column) {
         this.logicBuilder = new LogicBuilder();
+        this.column = column;
     }
 
     public WhereConditionBuilder from(Column column) {
         this.fromTable = column.getTable();
         this.actualTable = this.fromTable;
         this.logicBuilder.that(column);
-        return this;
-    }
-
-    public WhereConditionBuilder to(String table) {
-        return to(new Table(table));
-    }
-
-    public WhereConditionBuilder to(String table, String tableAlias) {
-        return to(new Table(table, tableAlias));
-    }
-
-    private WhereConditionBuilder to(Table table) {
-        // System.out.println(table.toString());
-        this.toTable = table;
         return this;
     }
 
@@ -85,24 +72,32 @@ public class WhereConditionBuilder {
         return this;
     }
 
-    public WhereConditionBuilder switchTable() {
-        if (this.toTable == null) {
-            throw new IllegalStateException("toTable is null");
-        }
-        this.actualTable = this.toTable;
+    public WhereConditionBuilder equals(String strValue) {
+        this.logicBuilder.equals(strValue);
         return this;
     }
 
-    public JoinCondition build() {
-        return new JoinCondition(this.logicBuilder, this.toTable);
+    public WhereConditionBuilder equals(Integer intValue) {
+        this.logicBuilder.equals(intValue);
+        return this;
     }
 
-    public WhereConditionBuilder toSub(String subquery) {
-        return to(new Subquery(subquery));
+    public WhereConditionBuilder equals(Float floatValue) {
+        this.logicBuilder.equals(floatValue);
+        return this;
     }
 
-    public WhereConditionBuilder toSub(String subquery, String alias) {
-        return to(new Subquery(subquery, alias));
+    public WhereConditionBuilder equals(Double doubleValue) {
+        this.logicBuilder.equals(doubleValue);
+        return this;
     }
 
+    public WhereConditionBuilder equals(Boolean boolValue) {
+        this.logicBuilder.equals(boolValue);
+        return this;
+    }
+
+    public WhereCondition build() {
+        return new WhereCondition(this.logicBuilder, this.toTable);
+    }
 }
