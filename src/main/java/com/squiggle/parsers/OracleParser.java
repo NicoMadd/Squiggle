@@ -49,9 +49,6 @@ public class OracleParser extends Parser {
         if (selectQuery.isDistinct()) {
             out.print(" DISTINCT");
         }
-        if (selectQuery.withLimit() && !selectQuery.withOffset()) {
-            out.print(" TOP " + selectQuery.getLimit());
-        }
 
         // Add columns to select
         out.space();
@@ -91,6 +88,12 @@ public class OracleParser extends Parser {
             out.space();
 
             appendList(out, selectQuery.listOrder(), ",");
+        }
+
+        // Add limit
+        if (selectQuery.withLimit() && !selectQuery.withOffset()) {
+            out.space();
+            out.print("LIMIT " + selectQuery.getLimit());
         }
 
         // Add offset
