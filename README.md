@@ -10,36 +10,36 @@ Im planning on giving maintenance to it, and developing it even further since I 
 
 ## What we have
 
-Actually we are on v1.6.8. Squiggle can make
+Actually we are on v1.6.9.1 Squiggle can make
 
-- SELECT
-- INSERT
-- UPDATE
-- DELETE
-- CREATE TABLE
-- CREATE DATABASE
-- JOIN
-  - INNER
-  - LEFT
-  - RIGHT
-  - OUTER
-  - FULL
-  - ON CONDITION BUILDER
-- WHERE
-- GROUP BY
-- ORDER BY
-- CONSTRAINTS
-  - PRIMARY KEY
-  - FOREIGN KEY
-  - AUTO INCREMENT
-  - NULLABLE
-  - NOT NULLABLE
-  - UNIQUE
-  - DEFAULT VALUE
-- FUNCTIONS
-  - SUM
-  - AVERAGE
-  - COUNT
+-   SELECT
+-   INSERT
+-   UPDATE
+-   DELETE
+-   CREATE TABLE
+-   CREATE DATABASE
+-   JOIN
+    -   INNER
+    -   LEFT
+    -   RIGHT
+    -   OUTER
+    -   FULL
+    -   ON CONDITION BUILDER
+-   WHERE
+-   GROUP BY
+-   ORDER BY
+-   CONSTRAINTS
+    -   PRIMARY KEY
+    -   FOREIGN KEY
+    -   AUTO INCREMENT
+    -   NULLABLE
+    -   NOT NULLABLE
+    -   UNIQUE
+    -   DEFAULT VALUE
+-   FUNCTIONS
+    -   SUM
+    -   AVERAGE
+    -   COUNT
 
 ## Looking Forward
 
@@ -50,7 +50,7 @@ Also handle views and more table definitions as well as triggers.
 
 1. SQL SERVER - [X]
 2. MySQL - [X]
-3. Oracle - [ ]
+3. Oracle - [X]
 4. PostgreSQL - [ ]
 
 ## TODOs
