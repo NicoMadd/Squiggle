@@ -26,6 +26,8 @@ public class FloatTypeTest {
 
         Output output = new Output("");
         value.write(output);
+        
+        System.out.println(output.toString());
         assertEquals("1.234", output.toString());
     }
 

@@ -18,6 +18,7 @@ public class DeleteQueryTest {
     @BeforeAll
     public static void setUp() {
         Squiggle.setParser(new MySQLParser());
+        FloatTypeValue.setAsDotSeparated();
     }
 
     @BeforeEach

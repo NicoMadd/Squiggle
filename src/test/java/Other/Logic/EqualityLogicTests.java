@@ -7,6 +7,7 @@ import com.squiggle.types.values.BooleanTypeValue;
 import com.squiggle.types.values.FloatTypeValue;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class EqualityLogicTests {
@@ -14,6 +15,12 @@ public class EqualityLogicTests {
         @AfterEach
         public void tearDown() {
                 BooleanTypeValue.setAsText(false);
+
+        }
+
+        @BeforeAll
+        public static void setup() {
+                FloatTypeValue.setAsDotSeparated();
         }
 
         @Test

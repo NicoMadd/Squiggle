@@ -2,6 +2,8 @@ package Other.Logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeAll;
+
 import com.squiggle.builders.LogicBuilder;
 import com.squiggle.types.values.BooleanTypeValue;
 import com.squiggle.types.values.FloatTypeValue;
@@ -9,6 +11,11 @@ import com.squiggle.types.values.FloatTypeValue;
 import org.junit.jupiter.api.Test;
 
 public class AndLogicTests {
+
+        @BeforeAll
+        public static void setup() {
+                FloatTypeValue.setAsDotSeparated();
+        }
 
         @Test
         public void simpleStringStringAnd() {
