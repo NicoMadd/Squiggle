@@ -93,17 +93,18 @@ public class OracleParser extends Parser {
         // Add limit
         if (selectQuery.withLimit() && !selectQuery.withOffset()) {
             out.space();
-            out.print("LIMIT " + selectQuery.getLimit());
+            out.print("OFFSET 0 ROWS FETCH NEXT " + selectQuery.getLimit() + " ROWS ONLY");
         }
 
         // Add offset
-        if (selectQuery.withOffset()) {
+        if (selectQuery.withOffset() && !selectQuery.withLimit()) {
             out.space();
             out.print("OFFSET " + selectQuery.getOffset());
         }
         if (selectQuery.withLimit() && selectQuery.withOffset()) {
             out.space();
-            out.print("ROWS FETCH NEXT " + selectQuery.getLimit() + " ROWS ONLY");
+            out.print(
+                    "OFFSET " + selectQuery.getOffset() + " ROWS FETCH NEXT " + selectQuery.getLimit() + " ROWS ONLY");
         }
 
     }

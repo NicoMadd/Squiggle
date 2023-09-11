@@ -152,7 +152,7 @@ public class SelectQueryTest {
     public void selectWithLimit() {
         Integer limit = new Random().nextInt(100);
         SelectQuery select = Squiggle.Select().from("table").select("*").limit(limit);
-        assertEquals("SELECT table.* FROM table LIMIT " + limit, select.toString());
+        assertEquals("SELECT table.* FROM table OFFSET 0 ROWS FETCH NEXT " + limit + " ROWS ONLY", select.toString());
     }
 
     @Test
